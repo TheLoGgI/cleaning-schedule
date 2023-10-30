@@ -1,5 +1,6 @@
 import "./globals.css"
 
+import { Analytics } from "@vercel/analytics/react"
 import Header from "./components/landing/Header"
 // import Header from "./components/Header"
 import { Inter } from "next/font/google"
@@ -35,6 +36,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Header user={user} />
         <main className="min-h-screen bg-background">{children}</main>
+        <Analytics />
       </body>
     </html>
   )
