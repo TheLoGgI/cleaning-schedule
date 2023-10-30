@@ -13,7 +13,7 @@ export default function LogoutButton() {
     <form action="/auth/sign-out" method="post">
       <button
         // onClick={handleLogout}
-        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
       >
         Logout
       </button>

@@ -1,5 +1,4 @@
 import ScheduleTab, { ScheduleTable } from "../Tabs/ScheduleTab"
-import { cookies, headers } from "next/headers"
 
 import { AuthUser } from "@supabase/supabase-js"
 import Link from "next/link"
@@ -8,8 +7,8 @@ import ModalUpdateSchedule from "../ModalUpdateSchedule"
 import RoomTab from "../Tabs/RoomsTab"
 import TabNav from "./TabNav"
 import { TabPanels } from "@/app/components/Tab"
+import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { request } from "https"
 
 // import ModalUpdateSchedule from '@/app/schedule/ModalUpdateSchedule'
 

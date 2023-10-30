@@ -1,10 +1,12 @@
 import "./globals.css"
 
-import Header from "./components/Header"
+import Header from "./components/landing/Header"
+// import Header from "./components/Header"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { usePathname } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"] })
 
