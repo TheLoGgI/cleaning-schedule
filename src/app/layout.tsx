@@ -2,7 +2,6 @@ import "./globals.css"
 
 import { Analytics } from "@vercel/analytics/react"
 import Header from "./components/landing/Header"
-// import Header from "./components/Header"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
 import { cookies } from "next/headers"

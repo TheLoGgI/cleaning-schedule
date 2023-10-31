@@ -99,14 +99,10 @@ export default function Header({ user }: { user: any }) {
             </button>
           </div>
           <div className="mt-6 flow-root">
-            {user !== null ? (
-              <div className="flex items-center gap-4">
-                Hey, {user.email}! <LogoutButton />
-              </div>
-            ) : (
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                {user !== null &&
+                  navigation.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}
@@ -115,7 +111,12 @@ export default function Header({ user }: { user: any }) {
                       {item.name}
                     </a>
                   ))}
+              </div>
+              {user !== null ? (
+                <div className="flex items-center gap-4">
+                  Hey, {user.email}! <LogoutButton />
                 </div>
+              ) : (
                 <div className="py-6">
                   <Link
                     href="/login"
@@ -124,8 +125,8 @@ export default function Header({ user }: { user: any }) {
                     Login
                   </Link>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </Dialog.Panel>
       </Dialog>

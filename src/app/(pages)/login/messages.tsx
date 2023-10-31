@@ -1,21 +1,20 @@
-'use client'
+"use client"
 
-import { useSearchParams } from 'next/navigation'
-
-export default function Messages() {
-  const searchParams = useSearchParams()
-  const error = searchParams.get('error')
-  const message = searchParams.get('message')
+export default function Messages({
+  state,
+}: {
+  state: { error?: string; message?: string }
+}) {
   return (
     <>
-      {error && (
+      {state.error && (
         <p className="mt-4 p-4 bg-neutral-900 text-neutral-300 text-center">
-          {error}
+          {state.error}
         </p>
       )}
-      {message && (
-        <p className="mt-4 p-4 bg-neutral-900 text-neutral-300 text-center">
-          {message}
+      {state.message && (
+        <p className="font-semibold mt-4 p-4 bg-neutral-900 text-neutral-300 text-center">
+          {state.message}
         </p>
       )}
     </>

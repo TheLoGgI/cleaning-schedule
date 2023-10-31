@@ -37,8 +37,10 @@ export async function inviteUser(formData: FormData) {
   )
 
   const { data, error } = await supabase.auth.admin.inviteUserByEmail(email)
+  console.log("data: ", data)
+  console.log("error: ", error)
 
-// TODO: Need more testing
+  // TODO: Need more testing
   // 422 - A user with this email address has already been registered
   if (error?.status === 422) {
     const alreadyCreatedUser = await supabase

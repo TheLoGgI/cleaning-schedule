@@ -15,12 +15,11 @@ export default async function Login() {
   const currentUser = await supabase
     .from("User")
     .select("*")
-    .eq("authId", String("af20f24e-7ec4-42ce-89e2-130f44b1c68c"))
+    .eq("authId", authUser.data.user?.id as string)
     .single()
   console.log("currentUser: ", currentUser)
-  // const schedules: any[] = []
 
-  if (authUser === null || currentUser === null) {
+  if (authUser.data.user === null || currentUser === null) {
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
         <h1 className="text-2xl text-center mt-40 font-semibold">
@@ -29,9 +28,9 @@ export default async function Login() {
         <p>Login to create your own dashboard</p>
         <Link
           href="/login"
-          className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Login
+          Log in
         </Link>
       </section>
     )

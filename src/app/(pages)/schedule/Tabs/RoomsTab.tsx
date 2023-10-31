@@ -1,10 +1,11 @@
 "use server"
 
 import { ActionsColumn } from "../clientActionsColum"
-import Messages from "../../login/messages"
 import ModalCreateRoom from "../ModalCreateRoom"
 import { TabPanel } from "@/app/components/Tab"
 import { createRoom } from "../../../server/actions/createRoom"
+
+// import Messages from "../../login/messages"
 
 const RoomTab = ({
   rooms,
@@ -71,7 +72,7 @@ const RoomTab = ({
             Create Room
           </button>
 
-          <Messages />
+          {/* <Messages /> */}
         </form>
       </ModalCreateRoom>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

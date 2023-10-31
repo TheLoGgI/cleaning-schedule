@@ -156,7 +156,7 @@ export const ModalInviteUser = forwardRef<HTMLDialogElement, Props>(
               Invite User
             </button>
 
-            <Messages />
+            {/* <Messages /> */}
           </form>
         </div>
       </dialog>

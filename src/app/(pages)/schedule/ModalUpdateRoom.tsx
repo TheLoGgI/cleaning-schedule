@@ -119,7 +119,7 @@ export default function ModalUpdateRoom({ scheduleId, room }: Props) {
                 Update Room
               </button>
 
-              <Messages />
+              {/* <Messages /> */}
             </form>
           </div>
         </dialog>,
