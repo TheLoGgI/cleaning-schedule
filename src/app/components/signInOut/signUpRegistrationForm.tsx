@@ -14,9 +14,6 @@ const initialState = {
 export default function SignUpRegistrationForm() {
   const [state, formAction] = useFormState(signUpRegistration, initialState)
 
-  const domain = getDomainUrl()
-  console.info("domain: ", domain)
-
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

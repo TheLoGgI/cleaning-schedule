@@ -45,15 +45,12 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     return { error: "Sorry, could not create the user" }
 
   const domain = getDomainUrl()
-  console.info("domain: ", domain)
 
   const newAuthenticatedUser = await supabase.auth.signUp({
     email,
     password,
     options: {
-      // @ts-ignore
-      redirectTo: `${domain}/auth/callback`,
-      // emailRedirectTo: `${domain}/auth/callback`,
+      emailRedirectTo: `${domain}/auth/callback`,
       data: {
         firstName,
         lastName,
