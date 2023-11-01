@@ -51,7 +51,8 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${domain}/auth/callback`,
+      redirectTo: `${domain}/auth/callback`,
+      // emailRedirectTo: `${domain}/auth/callback`,
       data: {
         firstName,
         lastName,
