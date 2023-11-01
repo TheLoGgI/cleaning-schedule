@@ -51,6 +51,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     email,
     password,
     options: {
+      // @ts-ignore
       redirectTo: `${domain}/auth/callback`,
       // emailRedirectTo: `${domain}/auth/callback`,
       data: {
