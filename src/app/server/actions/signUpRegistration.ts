@@ -1,19 +1,8 @@
 "use server"
 
-import { cookies, headers } from "next/headers"
-import { revalidatePath, revalidateTag } from "next/cache"
-
+import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { redirect } from "next/navigation"
-
-// type UpdateRoomActionProps = FormDataEntryValue
-
-// type UpdateRoomSelect = {
-//   data: {
-//     userID: string
-//     User: { firstName: string; lastName: string }
-//   }
-// }
+import { getDomainUrl } from "@/app/helpers/getUrl"
 
 export async function signUpRegistration(prevState: any, formData: FormData) {
   const email = String(formData.get("email"))
@@ -55,11 +44,13 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
   if (doesUserExists.data !== null)
     return { error: "Sorry, could not create the user" }
 
+  const domain = getDomainUrl()
+
   const newAuthenticatedUser = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/callback`,
+      emailRedirectTo: `${domain}/auth/callback`,
       data: {
         firstName,
         lastName,
