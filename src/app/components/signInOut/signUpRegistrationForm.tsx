@@ -37,7 +37,7 @@ export default function SignUpRegistrationForm() {
               <div>
                 <label
                   htmlFor="first-name"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
+                  className="block text-sm leading-6 text-gray-900"
                 >
                   First name <span className="text-red-700">*</span>
                 </label>
@@ -55,7 +55,7 @@ export default function SignUpRegistrationForm() {
               <div>
                 <label
                   htmlFor="last-name"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
+                  className="block text-sm leading-6 text-gray-900"
                 >
                   Last name
                 </label>
