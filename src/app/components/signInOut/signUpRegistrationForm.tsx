@@ -3,6 +3,7 @@
 import CleaningLogo from "../CleaningLogo"
 import Messages from "@/app/(pages)/login/messages"
 import { PendingButton } from "./signInOutButtonsState"
+import { getDomainUrl } from "@/app/helpers/getUrl"
 import { signUpRegistration } from "@/app/server/actions/signUpRegistration"
 import { useFormState } from "react-dom"
 
@@ -12,6 +13,9 @@ const initialState = {
 
 export default function SignUpRegistrationForm() {
   const [state, formAction] = useFormState(signUpRegistration, initialState)
+
+  const domain = getDomainUrl()
+  console.info("domain: ", domain)
 
   return (
     <>
