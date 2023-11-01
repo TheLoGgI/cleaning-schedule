@@ -59,7 +59,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.ORIGIN}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/callback`,
       data: {
         firstName,
         lastName,
