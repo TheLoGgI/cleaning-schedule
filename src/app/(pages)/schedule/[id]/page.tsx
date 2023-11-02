@@ -4,6 +4,7 @@ import { AuthUser } from "@supabase/supabase-js"
 import Link from "next/link"
 import MembersTab from "../Tabs/MembersTab"
 import ModalUpdateSchedule from "../ModalUpdateSchedule"
+import { Role } from "@/app/components/EnumRole"
 import RoomTab from "../Tabs/RoomsTab"
 import TabNav from "./TabNav"
 import { TabPanels } from "@/app/components/Tab"
@@ -61,6 +62,19 @@ export default async function Page({
     )
   }
 
+  const role = await supabase
+    .from("ScheduleRole")
+    .select("role")
+    .match({
+      scheduleId: params.id,
+      authId: auth.data.user.id,
+    })
+    .single()
+
+  const isUserAdmin =
+    role.data?.role ===
+    Role.Admin /* || Role[role.data?.role as keyof typeof Role] === Role.Moderator */
+
   const rooms = await supabase
     .from("Room")
     .select(
@@ -84,10 +98,12 @@ export default async function Page({
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
         </h1>
-        <ModalUpdateSchedule
-          schedule={schedule}
-          user={auth.data.user as AuthUser}
-        />
+        {isUserAdmin && (
+          <ModalUpdateSchedule
+            schedule={schedule}
+            user={auth.data.user as AuthUser}
+          />
+        )}
 
         <p>
           Starting Week: <span>{schedule.startingWeek}</span>
