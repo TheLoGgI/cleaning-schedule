@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/notify-user-with-schedule-week",
+      "path": "/api/cron",
       "schedule": "15 21 * * *"
     }
   ]
