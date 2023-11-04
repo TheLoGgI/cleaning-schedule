@@ -31,7 +31,38 @@ export default async function RootLayout({
   const user = auth.data.user
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      // className={`
+      // ${playfair.variable} ${roboto.variable}`}
+    >
+      <head>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/favicons/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicons/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicons/favicon-16x16.png"
+        />
+        <link rel="icon" sizes="16x16" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+      </head>
+
       <body className={inter.className}>
         <Header user={user} />
         <main className="min-h-screen bg-background">{children}</main>
