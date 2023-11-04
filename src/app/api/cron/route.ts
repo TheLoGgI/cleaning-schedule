@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 import { Resend } from "resend"
 
-// export const config = {
-//   runtime: "edge",
-// }
+export const config = {
+  runtime: "edge",
+}
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
