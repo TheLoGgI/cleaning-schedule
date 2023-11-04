@@ -37,7 +37,7 @@ export default async function Login() {
   }
 
   // TODO: failed to load schedules
-  const { data: schedules } = await supabase
+  const { data: schedules } =  await supabase
     .from("Schedule")
     .select("*")
     .eq("createdBy", currentUser.data?.id as string)
