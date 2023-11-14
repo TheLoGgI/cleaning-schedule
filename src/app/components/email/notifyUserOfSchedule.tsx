@@ -73,7 +73,7 @@ export const Email = ({ username = "", scheduleId = "-1" }: PropsType) => (
   </Html>
 )
 
-export default GithubAccessTokenEmail
+// export default GithubAccessTokenEmail
 
 const main = {
   backgroundColor: "#ffffff",
