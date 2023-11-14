@@ -94,7 +94,7 @@ export default async function Page({
       <header>
         <h1 className="text-2xl font-semibold inline-block mr-4">
           Schedule: {schedule.name}
-          <span className="font-normal text-base border p-2 ml-2 rounded">
+          <span className="font-normal text-base border p-2 ml-2 rounded print:hidden">
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
         </h1>
@@ -105,7 +105,7 @@ export default async function Page({
           />
         )}
 
-        <p>
+        <p className="print:hidden">
           Starting Week: <span>{schedule.startingWeek}</span>
         </p>
       </header>
@@ -118,6 +118,7 @@ export default async function Page({
             scheduleId={params.id}
           />
           <ScheduleTab
+            rooms={rooms.data as unknown as Room[]}
             scheduleId={params.id}
             startingWeek={schedule.startingWeek}
           />

@@ -84,14 +84,15 @@ export async function generateSchedule(formData: FormData) {
   const shuffledRooms = shuffleRooms((rooms.data as unknown as Room[]) || [])
 
   const newScheduleRows: Omit<ScheduleRow, "id">[] = []
-  for (let index = 0; index < shuffledRooms.length; index += 2) {
+  let weekNr = startingWeek
+  for (let index = 0; index < shuffledRooms.length; index += 2, weekNr++) {
     const first = shuffledRooms[index]
     const second = shuffledRooms[index + 1]
 
     if (first === undefined || second === undefined) {
       newScheduleRows.push({
         scheduleId,
-        weekNr: startingWeek + index,
+        weekNr: weekNr,
         roomOne: first?.id ?? null,
         roomTwo: second?.id ?? null,
       })
@@ -102,17 +103,14 @@ export async function generateSchedule(formData: FormData) {
 
     newScheduleRows.push({
       scheduleId,
-      weekNr: startingWeek + index,
+      weekNr: weekNr,
       roomOne: first.id,
       roomTwo: second.id,
     })
   }
   console.log("scheduleRows: ", newScheduleRows)
 
-  const insertedScheduleRows = await supabase
-    .from("ScheduleRow")
-    .insert(newScheduleRows)
-  console.log("insertedScheduleRows: ", insertedScheduleRows)
+  await supabase.from("ScheduleRow").insert(newScheduleRows)
 
   revalidatePath("/schedule/[id]#Schedule", "page")
 }

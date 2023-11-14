@@ -1,27 +1,43 @@
+import ModalInsertScheduleRow from "../ModalInsertScheduleRow"
+import { PendingButton } from "@/app/components/signInOut/pendingButton"
+import { PrintButton } from "@/app/components/PrintButton"
+import { ScheduleTabBody } from "./ScheduleTabBody"
 import { TabPanel } from "@/app/components/Tab"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { generateSchedule } from "../../../server/actions/generateSchedule"
 
-const ScheduleTab = async ({
+const ScheduleTab = ({
+  rooms,
   scheduleId,
   startingWeek,
 }: {
+  rooms: Room[]
   scheduleId: string
   startingWeek: number
 }) => {
   return (
     <TabPanel>
-      <form action={generateSchedule}>
-        <input type="hidden" name="scheduleId" value={scheduleId} />
-        <input type="hidden" name="startingWeek" value={startingWeek} />
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Generate Schedule
-        </button>
-      </form>
+      <div className="flex justify-between items-center print:hidden">
+        <div className="flex gap-4 my-10">
+          <ModalInsertScheduleRow
+            weekNr={startingWeek}
+            rooms={rooms}
+            scheduleId={scheduleId}
+          />
+          <form action={generateSchedule}>
+            <input type="hidden" name="scheduleId" value={scheduleId} />
+            <input type="hidden" name="startingWeek" value={startingWeek} />
+            <PendingButton
+              type="submit"
+              className="border-2 border-blue-700 hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Generate Schedule
+            </PendingButton>
+          </form>
+        </div>
+        <PrintButton />
+      </div>
 
       <ScheduleTable scheduleId={scheduleId} />
     </TabPanel>
@@ -35,14 +51,15 @@ export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
     .from("ScheduleRow")
     .select(
       `*,
-      roomOne: Room!ScheduleRow_roomOne_fkey(id, roomNr, User(id, firstName, lastName, email)),
-      roomTwo: Room!ScheduleRow_roomTwo_fkey(id, roomNr, User(id, firstName, lastName, email))
-      `
+    roomOne: Room!ScheduleRow_roomOne_fkey(id, roomNr, User(id, firstName, lastName, email)),
+    roomTwo: Room!ScheduleRow_roomTwo_fkey(id, roomNr, User(id, firstName, lastName, email))
+    `
     )
     .eq("scheduleId", scheduleId)
+    .order("weekNr", { ascending: true })
 
   return (
-    <div className="relative mt-2 overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="relative mt-2 overflow-x-auto shadow-md sm:rounded-lg ">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -57,28 +74,7 @@ export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
             </th>
           </tr>
         </thead>
-        <tbody>
-          {schedule.data?.map((row: any) => {
-            return (
-              <tr
-                key={row.id}
-                className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
-              >
-                <td className="px-6 py-4">{row.weekNr}</td>
-                <td className="px-6 py-4">
-                  {row.roomOne === null
-                    ? "Empty"
-                    : `${row.roomOne.roomNr}: ${row.roomOne.User?.firstName} ${row.roomOne.User?.lastName}`}
-                </td>
-                <td className="px-6 py-4">
-                  {row.roomTwo === null
-                    ? "Empty"
-                    : `${row.roomTwo.roomNr}: ${row.roomTwo.User?.firstName} ${row.roomTwo.User?.lastName}`}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
+        <ScheduleTabBody schedule={schedule.data as Schedule[]} />
       </table>
     </div>
   )

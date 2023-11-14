@@ -20,7 +20,6 @@ export async function updateSchedule(formData: FormData) {
     .select("*")
     .eq("authId", authId)
     .single()
-  console.log("currentUser: ", currentUser)
 
   if (currentUser.error) {
     throw new Error("Could not find user: " + JSON.stringify(currentUser.error))

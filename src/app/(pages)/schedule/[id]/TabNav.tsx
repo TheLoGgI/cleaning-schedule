@@ -5,28 +5,39 @@ import { createContext, use, useEffect, useState } from "react"
 import { Tab } from "@headlessui/react"
 import { twMerge } from "tailwind-merge"
 
+type TabType = "Members" | "Rooms" | "Schedule"
 type Props = {
   children: React.ReactNode
 }
+
+const DEFAULT_SELECTED_TAB = 1
 
 export const ScheduleIdContext = createContext<string | null>(null)
 
 const TabsList = ["Members", "Rooms", "Schedule"]
 const TabNav = ({ children }: Props) => {
-  const [hash, setHash] = useState(TabsList[0])
+  const [indexOfHash, setIndexHash] = useState<number>(DEFAULT_SELECTED_TAB)
 
   useEffect(() => {
-    setHash(window.location.hash.replace("#", ""))
-  }, [hash])
+    if (location.hash === "") {
+      location.hash = TabsList[DEFAULT_SELECTED_TAB]
+    }
 
-  const indexOfHash = TabsList.indexOf(hash)
+    const lastSelectedTab = TabsList.indexOf(
+      window.location.hash.replace("#", "") as TabType
+    )
+
+    setIndexHash(
+      lastSelectedTab === -1 ? DEFAULT_SELECTED_TAB : lastSelectedTab
+    )
+  }, [])
 
   return (
     <Tab.Group
-      defaultIndex={indexOfHash}
-      onChange={(index) => console.log(index)}
+      selectedIndex={indexOfHash}
+      onChange={(index) => setIndexHash(index)}
     >
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center print:hidden">
         <Tab.List
           as="ul"
           className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400"

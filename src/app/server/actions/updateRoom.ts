@@ -13,8 +13,6 @@ type UpdateRoomSelect = {
 }
 
 export async function updateRoom(formData: FormData) {
-  console.log("formData: ", formData)
-
   const roomId = formData.get("roomId")
   const scheduleId = formData.get("scheduleId")
   const inCleaningSchedule = formData.get("inCleaningSchedule")

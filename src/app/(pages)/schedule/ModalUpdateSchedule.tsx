@@ -25,7 +25,7 @@ export default function ModalUpdateSchedule({
   return (
     <>
       <button
-        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+        className="font-medium text-blue-600 dark:text-blue-500 hover:underline print:hidden"
         type="button"
         onClick={() => dialogRef.current?.showModal()}
       >

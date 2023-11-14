@@ -2,7 +2,7 @@
 
 import CleaningLogo from "../CleaningLogo"
 import Messages from "@/app/(pages)/login/messages"
-import { PendingButton } from "./signInOutButtonsState"
+import { PendingButton } from "./pendingButton"
 import { getDomainUrl } from "@/app/helpers/getUrl"
 import { signUpRegistration } from "@/app/server/actions/signUpRegistration"
 import { useFormState } from "react-dom"
@@ -28,12 +28,7 @@ export default function SignUpRegistrationForm() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            action={formAction}
-            // action="/auth/sign-up"
-            // method="POST"
-          >
+          <form className="space-y-6" action={formAction}>
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <div>
                 <label

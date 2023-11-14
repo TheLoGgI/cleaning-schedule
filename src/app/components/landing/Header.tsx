@@ -24,7 +24,10 @@ export default function Header({ user }: { user: any }) {
 
   return (
     <header
-      className={twMerge("inset-x-0 top-0 z-50", isLandingPage && "absolute")}
+      className={twMerge(
+        "inset-x-0 top-0 z-50 print:hidden",
+        isLandingPage && "absolute"
+      )}
     >
       <nav
         className="flex items-center justify-between p-6 lg:px-8"
