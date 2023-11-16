@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2018",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/components/email/notifyUserOfSchedule.jsx"
+    "src/app/components/emails/notifyUserOfSchedule.jsx"
   ],
   "exclude": ["node_modules"]
 }

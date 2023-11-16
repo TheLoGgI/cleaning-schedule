@@ -4,7 +4,6 @@ import * as React from "react"
 
 import {
   Body,
-  Button,
   Container,
   Head,
   Html,
@@ -24,7 +23,10 @@ const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : ""
 
-export const Email = ({ username = "", scheduleId = "-1" }: PropsType) => (
+export const NotifyUsersOfSchedule = ({
+  username = "",
+  scheduleId = "-1",
+}: PropsType) => (
   <Html>
     <Head />
     <Preview>
