@@ -1,18 +1,19 @@
-"use client"
-
 import * as React from "react"
 
 import {
   Body,
+  Column,
   Container,
   Head,
   Html,
   Img,
   Link,
   Preview,
+  Row,
   Section,
   Text,
 } from "@react-email/components"
+import { days, tasks } from "@/app/api/cron/kitchenTasks"
 
 interface PropsType {
   username?: string
@@ -21,7 +22,8 @@ interface PropsType {
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : ""
+  : "https://www.cleaning-schedule.dk"
+console.log("baseUrl: ", baseUrl)
 
 export const NotifyUsersOfSchedule = ({
   username = "",
@@ -38,7 +40,7 @@ export const NotifyUsersOfSchedule = ({
           src={`${baseUrl}/cleaning-schedule-logo.png`}
           width="32"
           height="32"
-          alt="Github"
+          alt="Cleaning schedule Logo"
         />
 
         <Text style={title}>
@@ -51,8 +53,8 @@ export const NotifyUsersOfSchedule = ({
             Hey <strong>{username}</strong>!
           </Text>
           <Text style={text}>
-            A fine-grained personal access token (<Link>resend</Link>) was
-            recently added to your account.
+            You have cleaning duty in the coming week. You can see your schedule
+            below.
           </Text>
 
           <Link
@@ -62,14 +64,37 @@ export const NotifyUsersOfSchedule = ({
             Watch Schedule
           </Link>
         </Section>
-        {/* <Text style={links}>
-          <Link style={link}>Your security audit log</Link> ・{" "}
-          <Link style={link}>Contact support</Link>
-        </Text> */}
-
-        {/* <Text style={footer}>
-          GitHub, Inc. ・88 Colin P Kelly Jr Street ・San Francisco, CA 94107
-        </Text> */}
+        <Section>
+          <Text style={text}>
+            <strong>Things that has to be done, doing the week</strong>
+          </Text>
+          {tasks.map((task, index) => {
+            return (
+              <>
+                {index === 0 && (
+                  <Row>
+                    <strong>
+                      {task.days.map((day) => days[day]).join(", ")}
+                    </strong>
+                  </Row>
+                )}
+                {index === 5 && (
+                  <>
+                    <Row>‎ </Row> {/* Empty spacing */}
+                    <Row>
+                      <strong>Sunday</strong>
+                    </Row>
+                  </>
+                )}
+                <Row key={task.task}>
+                  <Column>
+                    {index + 1}. {task.task}
+                  </Column>
+                </Row>
+              </>
+            )
+          })}
+        </Section>
       </Container>
     </Body>
   </Html>
