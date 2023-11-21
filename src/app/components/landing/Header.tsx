@@ -25,7 +25,7 @@ export default function Header({ user }: { user: any }) {
   return (
     <header
       className={twMerge(
-        "inset-x-0 top-0 z-50 print:hidden",
+        "inset-x-0 top-0 z-50 shadow-md print:hidden",
         isLandingPage && "absolute"
       )}
     >

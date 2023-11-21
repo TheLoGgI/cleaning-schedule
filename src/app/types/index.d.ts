@@ -6,13 +6,23 @@ type User = {
 }
 
 type Schedule = {
-  id: string
-  createdAt: string
-  startingWeek: number
-  name: string
-  isActive: boolean
-  createdBy: string
+  scheduleId: string
+  weeks: {
+    weekNr: number
+    rooms: {
+      activeInSchedule: boolean
+      roomNr: number
+      User: User
+    }[]
+  }[]
 }
+// id: string
+// createdAt: string
+// startingWeek: number
+// name: string
+// isActive: boolean
+// createdBy: string
+// }
 
 type Room = {
   id: string

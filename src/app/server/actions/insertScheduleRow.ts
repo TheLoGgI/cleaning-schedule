@@ -8,6 +8,9 @@ import { revalidatePath } from "next/cache"
 // import { useRouter } from 'next/router'
 
 export async function insertScheduleRow(formData: FormData) {
+  {
+    /* TODO: Update for db model */
+  }
   const scheduleId = String(formData.get("scheduleId"))
   // const authId = String(formData.get("authId"))
   const weekNr = Number(formData.get("weekNr"))

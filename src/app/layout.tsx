@@ -65,7 +65,7 @@ export default async function RootLayout({
 
       <body className={inter.className}>
         <Header user={user} />
-        <main className="min-h-screen bg-background">{children}</main>
+        <main className="min-h-screen bg-background mt-10">{children}</main>
         <Analytics />
       </body>
     </html>

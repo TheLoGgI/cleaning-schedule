@@ -2,27 +2,28 @@
 
 import { useEffect, useState } from "react"
 
+import { swapScheduleRoomsRow } from "@/app/server/actions/swapScheduleRoomsRow"
 import { twMerge } from "tailwind-merge"
 
-const RoomCell = ({
+const RoomCellAdmin = ({
   room,
   selected,
-  setSelectedRoomSwap,
-}: {
+}: // setSelectedRoomSwap,
+{
   room: Room
   selected: boolean
-  setSelectedRoomSwap: (room: Room) => void
+  // setSelectedRoomSwap: (room: Room) => void
 }) => {
-  console.log("selected: ", selected)
+  // console.log("selected: ", selected)
   return (
     <td
       className={twMerge(
-        "px-6 py-4 group hover:bg-gray-200 cursor-pointer w-2/4",
+        "px-6 py-4 group hover:bg-gray-200 cursor-pointer",
         selected && "bg-gray-200 border border-blue-300"
       )}
-      onClick={() => {
-        setSelectedRoomSwap(room)
-      }}
+      // onClick={() => {
+      //   setSelectedRoomSwap(room)
+      // }}
     >
       <button
         className={twMerge(
@@ -42,41 +43,98 @@ const RoomCell = ({
   )
 }
 
-export const ScheduleTabBody = ({ schedule }: { schedule: Schedule[] }) => {
+export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
+  // console.log("schedule: ", schedule)
   const [selectedRoomSwap, setSelectedRoomSwap] = useState<string[]>([])
 
   const handleSwap = (room: Room) => {
-    if (selectedRoomSwap.length > 2) return null
+    // console.log("selectedRoomSwap.length: ", selectedRoomSwap.length)
+    // console.log("roomid", room.id)
+
+    if (selectedRoomSwap.length >= 2) {
+      console.log(selectedRoomSwap.length)
+      // swapScheduleRoomsRow(...selectedRoomSwap)
+      return
+    }
+
     console.log("selectedRoomSwap: ", selectedRoomSwap)
+    console.log(
+      "selectedRoomSwap.includes(room.id): ",
+      selectedRoomSwap.includes(room.id)
+    )
     if (selectedRoomSwap.includes(room.id)) {
-      setSelectedRoomSwap(selectedRoomSwap.filter((id) => id !== room.id))
+      // Clicked on already selected room, Remove it from selected
+      const rest = selectedRoomSwap.filter((id) => id !== room.id)
+      console.log("rest: ", rest)
+      setSelectedRoomSwap(rest)
     } else {
+      console.log("add room: ", room.id)
       setSelectedRoomSwap((prevState) => [...prevState, room.id])
     }
+    // console.log("selectedRoomSwap: ", selectedRoomSwap)
   }
 
   return (
     <tbody>
-      {schedule.map((row: any) => {
+      {schedule.weeks.map((row: any) => {
         return (
           <tr
             key={row.id}
             className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-gray"
           >
             <td className="px-6 py-4">{row.weekNr}</td>
-            <RoomCell
-              room={row.roomOne}
-              selected={selectedRoomSwap.includes(row.roomOne.id)}
-              setSelectedRoomSwap={handleSwap}
-            />
-            <RoomCell
+            {row.rooms.map((room: Room) => {
+              return (
+                <RoomCellAdmin
+                  key={room.roomNr}
+                  room={room}
+                  selected={false}
+                  // selected={selectedRoomSwap.includes(row..id)}
+                  // setSelectedRoomSwap={handleSwap}
+                />
+              )
+            })}
+
+            {/* <RoomCellAdmin
               room={row.roomTwo}
-              selected={selectedRoomSwap.includes(row.roomOne.id)}
+              selected={selectedRoomSwap.includes(row.roomTwo.id)}
               setSelectedRoomSwap={handleSwap}
-            />
+            /> */}
           </tr>
         )
       })}
     </tbody>
+  )
+}
+
+export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
+  console.log("schedule: ", schedule)
+  return (
+    <tbody>
+      {schedule.weeks.map((row: any) => {
+        console.log("row: ", row)
+        return (
+          <tr
+            key={row.weekNr}
+            className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-gray"
+          >
+            <td className="px-6 py-4">{row.weekNr}</td>
+            {row.rooms.map((room: Room) => {
+              return <RoomCell key={room.roomNr} room={room} />
+            })}
+          </tr>
+        )
+      })}
+    </tbody>
+  )
+}
+
+const RoomCell = ({ room }: { room: Room }) => {
+  return (
+    <td className="px-6 py-4 text-black">
+      {room === null
+        ? "Empty"
+        : `${room.roomNr}: ${room.User?.firstName} ${room.User?.lastName}`}
+    </td>
   )
 }

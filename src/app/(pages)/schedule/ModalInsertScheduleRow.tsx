@@ -82,6 +82,7 @@ export default function ModalInsertScheduleRow({
             </button>
           </header>
 
+          {/* TODO: Update for db model */}
           <form
             ref={formRef}
             className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"

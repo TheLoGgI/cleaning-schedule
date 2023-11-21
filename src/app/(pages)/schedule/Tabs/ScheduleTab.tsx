@@ -1,11 +1,14 @@
+import { ScheduleTabBody, ScheduleTabBodyAdmin } from "./ScheduleTabBody"
+
 import ModalInsertScheduleRow from "../ModalInsertScheduleRow"
 import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { PrintButton } from "@/app/components/PrintButton"
-import { ScheduleTabBody } from "./ScheduleTabBody"
+import { Role } from "@/app/components/EnumRole"
 import { TabPanel } from "@/app/components/Tab"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { generateSchedule } from "../../../server/actions/generateSchedule"
+import { getSchedule } from "@/app/server/quries/getSchedule"
 
 const ScheduleTab = ({
   rooms,
@@ -46,35 +49,56 @@ const ScheduleTab = ({
 
 export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
   const supabase = createServerComponentClient<any>({ cookies })
+  const auth = await supabase.auth.getUser()
 
-  const schedule = await supabase
-    .from("ScheduleRow")
-    .select(
-      `*,
-    roomOne: Room!ScheduleRow_roomOne_fkey(id, roomNr, User(id, firstName, lastName, email)),
-    roomTwo: Room!ScheduleRow_roomTwo_fkey(id, roomNr, User(id, firstName, lastName, email))
-    `
-    )
-    .eq("scheduleId", scheduleId)
-    .order("weekNr", { ascending: true })
+  const schedule = await getSchedule(scheduleId, auth, supabase)
+
+  const maxRoomsInWeek = schedule?.weeks.reduce(
+    (roomsInWeek, row) =>
+      row.rooms.length > roomsInWeek ? row.rooms.length : roomsInWeek,
+    0
+  ) as number
+  // const tableHeadCount = Array.from({ length: maxRoomsInWeek })
+
+  console.log("maxRoomsInWeek: ", maxRoomsInWeek)
+
+  console.log("schedule: ", JSON.stringify(schedule))
+
+  const role = await supabase
+    .from("ScheduleRole")
+    .select("role")
+    .match({
+      scheduleId: scheduleId,
+      authId: auth.data.user?.id,
+    })
+    .single()
+
+  const isUserAdmin =
+    role.data?.role ===
+    Role.Admin /* || Role[role.data?.role as keyof typeof Role] === Role.Moderator */
 
   return (
-    <div className="relative mt-2 overflow-x-auto shadow-md sm:rounded-lg ">
+    <div className="relative mt-8 overflow-x-auto shadow-md sm:rounded-lg ">
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" className="px-6 py-3">
-              Week Nr.
-            </th>
-            <th scope="col" className="px-6 py-3">
-              1. Cleaner
-            </th>
-            <th scope="col" className="px-6 py-3">
-              2. Cleaner
+            <th className="px-6 py-3">Week Nr.</th>
+            <th
+              className="px-6 py-3 text-center bg-gray-100"
+              colSpan={maxRoomsInWeek}
+            >
+              Cleaners
             </th>
           </tr>
         </thead>
-        <ScheduleTabBody schedule={schedule.data as Schedule[]} />
+
+        {schedule !== null ? (
+          isUserAdmin ? (
+            <ScheduleTabBodyAdmin schedule={schedule} />
+          ) : (
+            <ScheduleTabBody schedule={schedule} />
+          )
+        ) : null}
       </table>
     </div>
   )
