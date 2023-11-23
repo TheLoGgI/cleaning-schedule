@@ -8,11 +8,11 @@ import { twMerge } from "tailwind-merge"
 const RoomCellAdmin = ({
   room,
   selected,
-}: // setSelectedRoomSwap,
-{
+  toggleSelectedSwapItems,
+}: {
   room: Room
   selected: boolean
-  // setSelectedRoomSwap: (room: Room) => void
+  toggleSelectedSwapItems: () => void
 }) => {
   // console.log("selected: ", selected)
   return (
@@ -21,9 +21,7 @@ const RoomCellAdmin = ({
         "px-6 py-4 group hover:bg-gray-200 cursor-pointer",
         selected && "bg-gray-200 border border-blue-300"
       )}
-      // onClick={() => {
-      //   setSelectedRoomSwap(room)
-      // }}
+      onClick={toggleSelectedSwapItems}
     >
       <button
         className={twMerge(
@@ -44,62 +42,61 @@ const RoomCellAdmin = ({
 }
 
 export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
-  // console.log("schedule: ", schedule)
-  const [selectedRoomSwap, setSelectedRoomSwap] = useState<string[]>([])
+  console.log("schedule: ", schedule)
+  const [selectedRoomSwap, setSelectedRoomSwap] = useState<ScheduleCell[]>([])
 
-  const handleSwap = (room: Room) => {
-    // console.log("selectedRoomSwap.length: ", selectedRoomSwap.length)
-    // console.log("roomid", room.id)
-
-    if (selectedRoomSwap.length >= 2) {
+  const handleSwap = async (
+    room: Room,
+    weekNr: number,
+    isSelected: boolean
+  ) => {
+    if (selectedRoomSwap.length > 2) {
       console.log(selectedRoomSwap.length)
-      // swapScheduleRoomsRow(...selectedRoomSwap)
+      await swapScheduleRoomsRow(schedule.scheduleId, [
+        selectedRoomSwap[0],
+        selectedRoomSwap[1],
+      ])
       return
     }
 
-    console.log("selectedRoomSwap: ", selectedRoomSwap)
-    console.log(
-      "selectedRoomSwap.includes(room.id): ",
-      selectedRoomSwap.includes(room.id)
-    )
-    if (selectedRoomSwap.includes(room.id)) {
+    if (isSelected) {
       // Clicked on already selected room, Remove it from selected
-      const rest = selectedRoomSwap.filter((id) => id !== room.id)
-      console.log("rest: ", rest)
+      const rest = selectedRoomSwap.filter(
+        (scheduleItem) => scheduleItem.roomId !== room.id
+      )
       setSelectedRoomSwap(rest)
     } else {
-      console.log("add room: ", room.id)
-      setSelectedRoomSwap((prevState) => [...prevState, room.id])
+      setSelectedRoomSwap((prevState) => [
+        ...prevState,
+        { roomId: room.id, weekNr },
+      ])
     }
-    // console.log("selectedRoomSwap: ", selectedRoomSwap)
   }
 
   return (
     <tbody>
-      {schedule.weeks.map((row: any) => {
+      {schedule.weeks.map((week, index) => {
         return (
           <tr
-            key={row.id}
+            key={week.weekNr + index}
             className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 text-gray"
           >
-            <td className="px-6 py-4">{row.weekNr}</td>
-            {row.rooms.map((room: Room) => {
+            <td className="px-6 py-4">{week.weekNr}</td>
+            {week.rooms.map((room, index: number) => {
+              const isSelected = selectedRoomSwap.some(
+                (scheduleItem) => scheduleItem.roomId === room.id
+              )
               return (
                 <RoomCellAdmin
-                  key={room.roomNr}
+                  key={room.roomNr + index}
                   room={room}
-                  selected={false}
-                  // selected={selectedRoomSwap.includes(row..id)}
-                  // setSelectedRoomSwap={handleSwap}
+                  selected={isSelected}
+                  toggleSelectedSwapItems={() =>
+                    handleSwap(room, week.weekNr, isSelected)
+                  }
                 />
               )
             })}
-
-            {/* <RoomCellAdmin
-              room={row.roomTwo}
-              selected={selectedRoomSwap.includes(row.roomTwo.id)}
-              setSelectedRoomSwap={handleSwap}
-            /> */}
           </tr>
         )
       })}
@@ -108,11 +105,9 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
 }
 
 export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
-  console.log("schedule: ", schedule)
   return (
     <tbody>
       {schedule.weeks.map((row: any) => {
-        console.log("row: ", row)
         return (
           <tr
             key={row.weekNr}

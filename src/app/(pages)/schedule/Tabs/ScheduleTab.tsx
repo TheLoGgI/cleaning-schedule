@@ -58,11 +58,6 @@ export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
       row.rooms.length > roomsInWeek ? row.rooms.length : roomsInWeek,
     0
   ) as number
-  // const tableHeadCount = Array.from({ length: maxRoomsInWeek })
-
-  console.log("maxRoomsInWeek: ", maxRoomsInWeek)
-
-  console.log("schedule: ", JSON.stringify(schedule))
 
   const role = await supabase
     .from("ScheduleRole")

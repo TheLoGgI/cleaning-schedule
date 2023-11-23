@@ -14,28 +14,29 @@ export const getSchedule = async (
     .from("ScheduleRow")
     .select(
       `weekNr,
-        room: Room(activeInSchedule, roomNr, User(id, firstName, lastName, email))
+        room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
       `
     )
     .eq("scheduleId", scheduleId)
-  // .order("weekNr", { ascending: true })
+    .order("weekNr", { ascending: true })
 
-  const assembleSchedule = scheduleRows.data?.reduce<{
+  const assembleSchedule = (
+    scheduleRows.data as unknown as ScheduleRowData[]
+  )?.reduce<{
     scheduleId: string
-    weeks: Map<number, { weekNr: number; rooms: Omit<Room, "id" | "userId">[] }>
+    weeks: Map<number, { weekNr: number; rooms: Room[] }>
   }>(
     (scheduleCollection, row) => {
-      const { activeInSchedule, roomNr, User } = row.room
+      const { activeInSchedule, roomNr, User, id } = row.room
       if (scheduleCollection.weeks.has(row.weekNr)) {
         const existingRowForWeek = scheduleCollection.weeks.get(row.weekNr)
         if (!existingRowForWeek) return scheduleCollection
         existingRowForWeek.rooms.push({
+          id,
           activeInSchedule,
           roomNr,
           User,
         })
-
-        // scheduleCollection.weeks.set(row.weekNr, existingRowForWeek)
 
         return scheduleCollection
       }
@@ -44,6 +45,7 @@ export const getSchedule = async (
         weekNr: row.weekNr,
         rooms: [
           {
+            id,
             activeInSchedule,
             roomNr,
             User,
@@ -62,7 +64,6 @@ export const getSchedule = async (
   )
 
   if (!assembleSchedule) return null
-  console.log("assembleSchedule: ", assembleSchedule)
 
   return {
     ...assembleSchedule,

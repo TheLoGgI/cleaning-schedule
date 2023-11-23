@@ -5,17 +5,23 @@ type User = {
   email: string
 }
 
+type ScheduleRowData = {
+  weekNr: number
+  room: Room
+}
+
 type Schedule = {
   scheduleId: string
-  weeks: {
-    weekNr: number
-    rooms: {
-      activeInSchedule: boolean
-      roomNr: number
-      User: User
-    }[]
-  }[]
+  weeks: Week[]
 }
+
+type Week = {
+  weekNr: number
+  rooms: Room[]
+}
+
+type ScheduleCell = { roomId: string; weekNr: number }
+
 // id: string
 // createdAt: string
 // startingWeek: number
@@ -28,6 +34,5 @@ type Room = {
   id: string
   activeInSchedule: boolean
   roomNr: number
-  userId: string
-  User: CustomUser
+  User: User
 }
