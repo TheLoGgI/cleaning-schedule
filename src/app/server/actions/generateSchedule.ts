@@ -4,8 +4,7 @@ import { revalidatePath } from "next/cache"
 
 type ScheduleRow = {
   id: number
-  roomOne: string | null
-  roomTwo: string | null
+  room: string | null
   scheduleId: string
   weekNr: number
 }
@@ -90,23 +89,35 @@ export async function generateSchedule(formData: FormData) {
     const second = shuffledRooms[index + 1]
 
     if (first === undefined || second === undefined) {
-      newScheduleRows.push({
-        scheduleId,
-        weekNr: weekNr,
-        roomOne: first?.id ?? null,
-        roomTwo: second?.id ?? null,
-      })
+      newScheduleRows.push(
+        {
+          scheduleId,
+          weekNr: weekNr,
+          room: first?.id ?? null,
+        },
+        {
+          scheduleId,
+          weekNr: weekNr,
+          room: second?.id ?? null,
+        }
+      )
 
       // Skip the rest of the loop and continue with the next iteration
       continue
     }
 
-    newScheduleRows.push({
-      scheduleId,
-      weekNr: weekNr,
-      roomOne: first.id,
-      roomTwo: second.id,
-    })
+    newScheduleRows.push(
+      {
+        scheduleId,
+        weekNr: weekNr,
+        room: first.id,
+      },
+      {
+        scheduleId,
+        weekNr: weekNr,
+        room: second.id,
+      }
+    )
   }
   console.log("scheduleRows: ", newScheduleRows)
 
