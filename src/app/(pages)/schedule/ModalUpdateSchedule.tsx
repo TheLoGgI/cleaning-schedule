@@ -8,7 +8,7 @@ import { updateSchedule } from "@/app/server/actions/updateSchedule"
 // import { experimental_useFormStatus as useFormStatus } from 'react-dom'
 
 type Props = {
-  schedule: Schedule
+  schedule: DashboardSchedule
   user: AuthUser
   children?: JSX.Element
 }

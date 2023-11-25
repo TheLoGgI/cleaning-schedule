@@ -15,6 +15,14 @@ type Schedule = {
   weeks: Week[]
 }
 
+type DashboardSchedule = {
+  id: string
+  createdAt: string
+  startingWeek: number
+  name: string
+  isActive: boolean
+  createdBy: string
+}
 type Week = {
   weekNr: number
   rooms: Room[]
