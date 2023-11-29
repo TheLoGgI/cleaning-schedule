@@ -36,7 +36,6 @@ export const ListBox = forwardRef<HTMLButtonElement, ListSelectProps>(
     ref
   ) {
     const [selected, setSelected] = useState(options[0])
-    console.log("options: ", options)
 
     return (
       <Listbox
@@ -45,7 +44,6 @@ export const ListBox = forwardRef<HTMLButtonElement, ListSelectProps>(
         // defaultValue={startValue?.id}
         disabled={isDisabled}
         onChange={(value) => {
-          console.log("value: ", value)
           setSelected(value as unknown as typeof selected)
         }}
         name={name}

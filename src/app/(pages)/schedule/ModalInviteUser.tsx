@@ -39,7 +39,6 @@ const useInviteUserModal = ({ scheduleId, user }: Props) => {
   return {
     open: () => {
       setModalState({ scheduleId, user })
-      console.log("ref: ", ref, user?.firstName)
       ref.current?.showModal()
     },
     close: () => {

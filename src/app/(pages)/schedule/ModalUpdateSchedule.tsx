@@ -3,6 +3,7 @@
 import { useRef, useState } from "react"
 
 import { AuthUser } from "@supabase/supabase-js"
+import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 import { updateSchedule } from "@/app/server/actions/updateSchedule"
 
 // import { experimental_useFormStatus as useFormStatus } from 'react-dom'
@@ -21,6 +22,10 @@ export default function ModalUpdateSchedule({
   const dialogRef = useRef<HTMLDialogElement>(null)
   // const { pending, ...status } = useFormStatus()
   const formRef = useRef<HTMLFormElement>(null)
+  const [startingWeek, setStartingWeek] = useState<number>(
+    schedule.startingWeek
+  )
+  // const startingWeekRef = useRef<HTMLInputElement>(null)
 
   return (
     <>
@@ -105,14 +110,30 @@ export default function ModalUpdateSchedule({
               <label className="text-md dark:text-white" htmlFor="startingWeek">
                 Starting Week
               </label>
-              <input
-                type="number"
-                id="startingWeek"
-                className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border"
-                name="startingWeek"
-                defaultValue={schedule.startingWeek.toString()}
-                required
-              />
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  id="startingWeek"
+                  className="rounded-md w-20 px-4 py-2 bg-inherit border "
+                  name="startingWeek"
+                  value={startingWeek}
+                  onChange={(e) => {
+                    setStartingWeek(parseInt(e.target.value))
+                  }}
+                  required
+                />
+                <button
+                  className={`flex-grow bg-gray-200 px-2 py-2.5 enabled:hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm`}
+                  type="button"
+                  onClick={() => {
+                    const today = new Date()
+                    const currentWeekNumber = getWeekNumber(today)
+                    setStartingWeek(currentWeekNumber)
+                  }}
+                >
+                  Set to Current week
+                </button>
+              </div>
             </div>
             <div className="flex flex-row items-center justify-between">
               <label

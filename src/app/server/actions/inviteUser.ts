@@ -37,8 +37,6 @@ export async function inviteUser(formData: FormData) {
   )
 
   const { data, error } = await supabase.auth.admin.inviteUserByEmail(email)
-  console.log("data: ", data)
-  console.log("error: ", error)
 
   // TODO: Need more testing
   // 422 - A user with this email address has already been registered
@@ -48,7 +46,6 @@ export async function inviteUser(formData: FormData) {
       .select("id")
       .eq("email", email)
       .single()
-    console.log("alreadyCreatedUser: ", alreadyCreatedUser)
 
     if (alreadyCreatedUser.error)
       throw new Error(alreadyCreatedUser.error.message)
@@ -61,7 +58,6 @@ export async function inviteUser(formData: FormData) {
       .eq("userId", userId)
       .select()
       .explain()
-    console.log("alreadyCreatedUpdatedUser: ", alreadyCreatedUpdatedUser)
 
     const wasUserDeleted = await supabase
       .from("User")
@@ -69,12 +65,9 @@ export async function inviteUser(formData: FormData) {
       .eq("id", userId)
       .explain()
 
-    console.log("wasUserDeleted: ", wasUserDeleted)
     return
   }
 
-  //   // try {
-  //   console.log('roomId: ', roomId)
   const updatedUser = await supabase
     .from("User")
     .update({
@@ -82,14 +75,4 @@ export async function inviteUser(formData: FormData) {
       email: data.user?.email,
     })
     .match({ id: userId })
-  // .select(`userID, User(firstName, lastName)`)
-  console.log("updatedUser: ", updatedUser)
-
-  //   const roomUser = updatedRoom.data.User
-
-  //   revalidateTag('rooms')
-  //   revalidatePath(`/schedule/${scheduleId}`)
-  // } catch (error) {
-  //   console.log('error: ', error)
-  // }
 }

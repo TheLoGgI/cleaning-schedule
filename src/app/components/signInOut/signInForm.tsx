@@ -11,8 +11,10 @@ export default function SignInForm() {
               alt="Your Company"
             /> */}
           <CleaningLogo
-            className="mx-auto h-10 w-auto"
+            className="mx-auto w-auto"
             title="Cleaning Schedule"
+            // width="70"
+            // height="70"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account

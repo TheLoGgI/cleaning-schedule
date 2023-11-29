@@ -52,10 +52,10 @@ export default async function Page({
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8">
         <h1 className="text-2xl font-semibold">
-          Schedule: {schedule.name}
-          <span className="font-normal text-base border p-2 ml-2 rounded">
+          <span className="font-normal text-base border p-2 mx-2 rounded">
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
+          {schedule.name}
         </h1>
         <ScheduleTable scheduleId={params.id} />
       </section>
@@ -93,8 +93,8 @@ export default async function Page({
     <section className="container max-w-screen-lg mx-auto py-4 px-8">
       <header>
         <h1 className="text-2xl font-semibold inline-block mr-4">
-          Schedule: {schedule.name}
-          <span className="font-normal text-base border p-2 ml-2 rounded print:hidden">
+          {schedule.name}
+          <span className="font-normal text-base ml-2 p-2 bg-gray-200 rounded print:hidden">
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
         </h1>

@@ -9,8 +9,6 @@ const MembersTab = ({
   users: User[]
   scheduleId: string
 }) => {
-  //   console.log('users: ', users)
-
   return (
     <TabPanel>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

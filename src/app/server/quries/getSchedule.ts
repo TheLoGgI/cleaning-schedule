@@ -4,16 +4,39 @@ import { SupabaseClient, UserResponse } from "@supabase/supabase-js"
 
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { randomUUID } from "crypto"
+
+const deleteRoomUser = {
+  id: "empty",
+  activeInSchedule: true,
+  roomNr: 0,
+  User: {
+    id: "empty",
+    firstName: "Deleted",
+    lastName: "Room",
+    email: "",
+  },
+}
 
 export const getSchedule = async (
   scheduleId: string,
   auth: UserResponse,
   supabase: SupabaseClient<any, "public", any>
-): Promise<Schedule | null> => {
+): Promise<
+  | (Omit<Schedule, "weeks"> & {
+      weeks: {
+        weekNr: number
+        rooms: Array<Omit<Room, "id"> & { row: number }>
+      }[]
+    })
+  | null
+> => {
   const scheduleRows = await supabase
     .from("ScheduleRow")
     .select(
-      `weekNr,
+      `
+      id,
+      weekNr,
         room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
       `
     )
@@ -24,15 +47,25 @@ export const getSchedule = async (
     scheduleRows.data as unknown as ScheduleRowData[]
   )?.reduce<{
     scheduleId: string
-    weeks: Map<number, { weekNr: number; rooms: Room[] }>
+    weeks: Map<
+      number,
+      {
+        weekNr: number
+        rooms: Array<Omit<Room, "id"> & { row: number }>
+      }
+    >
   }>(
     (scheduleCollection, row) => {
-      const { activeInSchedule, roomNr, User, id } = row.room
+      const { activeInSchedule, roomNr, User } =
+        row.room !== null ? row.room : deleteRoomUser
+
       if (scheduleCollection.weeks.has(row.weekNr)) {
         const existingRowForWeek = scheduleCollection.weeks.get(row.weekNr)
         if (!existingRowForWeek) return scheduleCollection
+
+        // TODO: Replace RoomId with Id of row
         existingRowForWeek.rooms.push({
-          id,
+          row: row.id,
           activeInSchedule,
           roomNr,
           User,
@@ -45,7 +78,7 @@ export const getSchedule = async (
         weekNr: row.weekNr,
         rooms: [
           {
-            id,
+            row: row.id,
             activeInSchedule,
             roomNr,
             User,
@@ -57,6 +90,7 @@ export const getSchedule = async (
     {
       scheduleId,
       weeks: new Map(),
+      // Sample Format
       // [
       //   // { weekNr: 1, rooms: [{ roomNr: 1, User: { firstName: "John", lastName: "Doe" } }] }
       // ],

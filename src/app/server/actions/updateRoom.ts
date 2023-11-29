@@ -49,7 +49,4 @@ export async function updateRoom(formData: FormData) {
 
   revalidateTag("rooms")
   revalidatePath(`/schedule/${scheduleId}`)
-  // } catch (error) {
-  //   console.log('error: ', error)
-  // }
 }

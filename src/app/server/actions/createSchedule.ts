@@ -10,7 +10,6 @@ import { revalidatePath } from "next/cache"
 export async function createSchedule(formData: FormData) {
   const scheduleName = String(formData.get("scheduleName"))
   const authId = String(formData.get("authId"))
-  console.log("authId: ", authId)
   const startingWeek = Number(formData.get("startingWeek"))
 
   const supabase = createServerComponentClient({ cookies })
@@ -26,7 +25,6 @@ export async function createSchedule(formData: FormData) {
       .select("*")
       .eq("authId", authId)
       .single()
-    console.log("currentUser: ", currentUser)
     //   .eq('authId', 'd1c4923c-658b-4f1a-b310-ddcaad051af5')
 
     if (currentUser.error) {
@@ -69,7 +67,7 @@ export async function createSchedule(formData: FormData) {
     })
     revalidatePath("/dashboard", "page")
   } catch (error) {
-    console.log(error)
+    console.warn(error)
     // return redirect(
     //   `${requestUrl.origin}/login?error=Failed to create schedule`,
     //   {

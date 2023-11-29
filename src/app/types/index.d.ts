@@ -6,13 +6,24 @@ type User = {
 }
 
 type ScheduleRowData = {
+  id: number
   weekNr: number
   room: Room
 }
 
 type Schedule = {
   scheduleId: string
-  weeks: Week[]
+  weeks: {
+    weekNr: number
+    rooms: Array<Omit<Room, "id"> & { row: number }>
+  }[]
+}
+
+type NullableRoom = Room | null
+
+type ScheduleWithNullableRooms = {
+  scheduleId: string
+  weeks: { weekNr: number; rooms: NullableRoom[] }[]
 }
 
 type DashboardSchedule = {
@@ -28,18 +39,18 @@ type Week = {
   rooms: Room[]
 }
 
-type ScheduleCell = { roomId: string; weekNr: number }
-
-// id: string
-// createdAt: string
-// startingWeek: number
-// name: string
-// isActive: boolean
-// createdBy: string
-// }
+type ScheduleCell = { scheduleRowId: number; weekNr: number }
+type ScheduleCellEmptyRoom = { roomId: "Empty"; weekNr: number }
 
 type Room = {
   id: string
+  row: number
+  activeInSchedule: boolean
+  roomNr: number
+  User: User
+}
+type RoomWithoutId = {
+  row: number
   activeInSchedule: boolean
   roomNr: number
   User: User

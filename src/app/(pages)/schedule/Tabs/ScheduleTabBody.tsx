@@ -1,20 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-
 import { swapScheduleRoomsRow } from "@/app/server/actions/swapScheduleRoomsRow"
 import { twMerge } from "tailwind-merge"
+import { useState } from "react"
 
 const RoomCellAdmin = ({
   room,
   selected,
   toggleSelectedSwapItems,
 }: {
-  room: Room
+  room: RoomWithoutId
   selected: boolean
   toggleSelectedSwapItems: () => void
 }) => {
-  // console.log("selected: ", selected)
   return (
     <td
       className={twMerge(
@@ -42,34 +40,30 @@ const RoomCellAdmin = ({
 }
 
 export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
-  console.log("schedule: ", schedule)
   const [selectedRoomSwap, setSelectedRoomSwap] = useState<ScheduleCell[]>([])
 
   const handleSwap = async (
-    room: Room,
+    room: RoomWithoutId,
     weekNr: number,
-    isSelected: boolean
+    isSelected: boolean,
+    selectedRoomSwap: ScheduleCell[]
   ) => {
-    if (selectedRoomSwap.length > 2) {
-      console.log(selectedRoomSwap.length)
-      await swapScheduleRoomsRow(schedule.scheduleId, [
-        selectedRoomSwap[0],
-        selectedRoomSwap[1],
-      ])
-      return
-    }
+    const newState = isSelected
+      ? selectedRoomSwap.filter(
+          (scheduleItem) => scheduleItem.scheduleRowId !== room.row
+        )
+      : [...selectedRoomSwap, { scheduleRowId: room.row, weekNr }]
 
-    if (isSelected) {
-      // Clicked on already selected room, Remove it from selected
-      const rest = selectedRoomSwap.filter(
-        (scheduleItem) => scheduleItem.roomId !== room.id
-      )
-      setSelectedRoomSwap(rest)
-    } else {
-      setSelectedRoomSwap((prevState) => [
-        ...prevState,
-        { roomId: room.id, weekNr },
+    if (newState.length == 2) {
+      console.log("newState: ", newState)
+
+      await swapScheduleRoomsRow(schedule.scheduleId, [
+        newState[0],
+        newState[1],
       ])
+      setSelectedRoomSwap([])
+    } else {
+      setSelectedRoomSwap(newState)
     }
   }
 
@@ -84,15 +78,15 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
             <td className="px-6 py-4">{week.weekNr}</td>
             {week.rooms.map((room, index: number) => {
               const isSelected = selectedRoomSwap.some(
-                (scheduleItem) => scheduleItem.roomId === room.id
+                (scheduleItem) => scheduleItem.scheduleRowId === room.row
               )
               return (
                 <RoomCellAdmin
-                  key={room.roomNr + index}
+                  key={room?.roomNr ?? 0 + index}
                   room={room}
                   selected={isSelected}
                   toggleSelectedSwapItems={() =>
-                    handleSwap(room, week.weekNr, isSelected)
+                    handleSwap(room, week.weekNr, isSelected, selectedRoomSwap)
                   }
                 />
               )
@@ -105,6 +99,7 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
 }
 
 export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
+  console.log("schedule: ", schedule)
   return (
     <tbody>
       {schedule.weeks.map((row: any) => {

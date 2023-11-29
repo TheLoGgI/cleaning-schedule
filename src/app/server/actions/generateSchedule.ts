@@ -36,7 +36,6 @@ export async function generateSchedule(formData: FormData) {
   "use server"
   const scheduleId = String(formData.get("scheduleId"))
   const startingWeek = Number(formData.get("startingWeek"))
-  console.log("scheduleId: ", scheduleId)
 
   const supabase = createServerComponentClient<any>({ cookies })
 
@@ -61,8 +60,6 @@ export async function generateSchedule(formData: FormData) {
       .from("ScheduleRow")
       .delete()
       .eq("scheduleId", scheduleId)
-    console.log("deletedScheduleRows: ", deletedScheduleRows)
-    console.log("scheduleRowsCount: ", scheduleRows.count)
   }
 
   // TODO: add functions to client also
@@ -119,7 +116,6 @@ export async function generateSchedule(formData: FormData) {
       }
     )
   }
-  console.log("scheduleRows: ", newScheduleRows)
 
   await supabase.from("ScheduleRow").insert(newScheduleRows)
 

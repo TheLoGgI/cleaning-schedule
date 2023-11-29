@@ -1,6 +1,5 @@
 "use server"
 
-import { NextRequest } from "next/server"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { revalidatePath } from "next/cache"
@@ -9,10 +8,14 @@ export async function swapScheduleRoomsRow(
   scheduleId: string,
   scheduleSwap: [ScheduleCell, ScheduleCell]
 ) {
-  if (scheduleSwap[0].weekNr === scheduleSwap[1].weekNr) {
+  if (
+    scheduleSwap[0]?.weekNr === scheduleSwap[1]?.weekNr
+    // ||
+    // (scheduleSwap[0] == null && scheduleSwap[1] == null)
+  ) {
+    // TODO: Throw error
     return
   }
-  console.log("scheduleId: ", scheduleId)
 
   const supabase = createServerComponentClient(
     { cookies },
@@ -28,31 +31,38 @@ export async function swapScheduleRoomsRow(
       },
     }
   )
+
   // const auth = await supabase.auth.getUser()
 
-  const upsertedRows = await supabase
-    .from("ScheduleRow")
-    .update({
-      weekNr: scheduleSwap[1].weekNr,
-    })
-    .match({
-      scheduleId: scheduleId,
-      weekNr: scheduleSwap[0].weekNr,
-      room: scheduleSwap[0].roomId,
-    })
+  // First Room
 
-  await supabase
-    .from("ScheduleRow")
-    .update({
-      weekNr: scheduleSwap[0].weekNr,
-    })
-    .match({
-      scheduleId: scheduleId,
-      weekNr: scheduleSwap[1].weekNr,
-      room: scheduleSwap[1].roomId,
-    })
+  try {
+    const swap1 = await supabase
+      .from("ScheduleRow")
+      .update({
+        weekNr: scheduleSwap[1].weekNr,
+      })
+      .match({
+        scheduleId: scheduleId,
+        id: scheduleSwap[0].scheduleRowId,
+      })
+      .explain()
+    console.log("swap1: ", swap1)
+
+    const swap2 = await supabase
+      .from("ScheduleRow")
+      .update({
+        weekNr: scheduleSwap[0].weekNr,
+      })
+      .match({
+        scheduleId: scheduleId,
+        id: scheduleSwap[1].scheduleRowId,
+      })
+      .explain()
+    console.log("swap2: ", swap2)
+  } catch (error) {
+    console.warn("error: ", error)
+  }
 
   revalidatePath(`/schedule/${scheduleId}`)
-
-  console.log("upsertedRows: ", upsertedRows)
 }

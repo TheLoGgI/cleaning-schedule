@@ -23,7 +23,6 @@ interface PropsType {
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "https://www.cleaning-schedule.dk"
-console.log("baseUrl: ", baseUrl)
 
 export const NotifyUsersOfSchedule = ({
   username = "",

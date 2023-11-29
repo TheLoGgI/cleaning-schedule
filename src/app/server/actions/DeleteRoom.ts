@@ -7,10 +7,21 @@ import { revalidatePath } from "next/cache"
 export async function deleteRoom(formData: FormData) {
   const scheduleId = formData.get("scheduleId")
   const roomId = formData.get("roomId")
-  console.log("roomId: ", { roomId })
-  console.log("scheduleId: ", scheduleId)
 
-  const supabase = createServerComponentClient<any>({ cookies })
+  const supabase = createServerComponentClient(
+    { cookies },
+    {
+      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      options: {
+        global: {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json, */*; ",
+          },
+        },
+      },
+    }
+  )
 
   // TODO: check if scheduleId exists eg. params.id
 
@@ -21,10 +32,9 @@ export async function deleteRoom(formData: FormData) {
       .match({ id: roomId, scheduleID: scheduleId })
       .explain()
 
-    console.log("deletedRoom: ", deletedRoom)
     revalidatePath("/schedule/[id]", "page")
   } catch (error) {
     // throw new Error("error: can't delete room")
-    console.log("error: ", error)
+    console.warn("error: ", error)
   }
 }

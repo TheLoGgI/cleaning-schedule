@@ -17,7 +17,8 @@ export default async function Login() {
     .select("*")
     .eq("authId", authUser.data.user?.id as string)
     .single()
-  console.log("currentUser: ", currentUser)
+
+  const isPremium = currentUser.data?.premium
 
   if (authUser.data.user === null || currentUser === null) {
     return (
@@ -37,7 +38,7 @@ export default async function Login() {
   }
 
   // TODO: failed to load schedules
-  const { data: schedules } =  await supabase
+  const { data: schedules } = await supabase
     .from("Schedule")
     .select("*")
     .eq("createdBy", currentUser.data?.id as string)
@@ -47,8 +48,9 @@ export default async function Login() {
       <div className="flex align-center justify-between p-4">
         <h1 className="text-2xl">Dashboard</h1>
         <ModalCreateDashboard
-          title="Create new Dashboard"
+          // title="Create new Dashboard"
           user={authUser.data.user as AuthUser}
+          isPremium={isPremium}
         />
 
         {/* </ModalCreateDashboard> */}
