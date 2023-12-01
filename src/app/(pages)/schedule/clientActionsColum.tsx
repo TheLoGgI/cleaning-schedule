@@ -13,7 +13,10 @@ export const ActionsColumn = ({ room, scheduleId }: Props) => {
   return (
     <td className="px-6 py-4">
       <ModalUpdateRoomButton room={room} scheduleId={scheduleId} />
-      <form action={deleteRoom} className="inline-block">
+      <form
+        action={async (formData) => await deleteRoom(formData)}
+        className="inline-block"
+      >
         <input type="hidden" name="roomId" value={room.id} />
         <input type="hidden" name="scheduleId" value={scheduleId} />
         <PendingButton
