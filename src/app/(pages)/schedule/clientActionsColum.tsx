@@ -1,4 +1,4 @@
-import ModalUpdateRoom from "./ModalUpdateRoom"
+import { ModalUpdateRoomButton } from "./ModalUpdateRoom"
 import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { deleteRoom } from "@/app/server/actions/deleteRoom"
 
@@ -10,7 +10,8 @@ type Props = {
 export const ActionsColumn = ({ room, scheduleId }: Props) => {
   return (
     <td className="px-6 py-4">
-      <ModalUpdateRoom room={room} scheduleId={scheduleId} />
+      {/* <ModalUpdateRoom room={room} scheduleId={scheduleId} /> */}
+      <ModalUpdateRoomButton room={room} scheduleId={scheduleId} />
       <form action={deleteRoom} className="inline-block">
         <input type="hidden" name="roomId" value={room.id} />
         <input type="hidden" name="scheduleId" value={scheduleId} />

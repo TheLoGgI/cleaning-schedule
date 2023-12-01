@@ -1,32 +1,104 @@
 "use client"
 
-import Messages from "../login/messages"
-import { createPortal } from "react-dom"
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  createContext,
+  forwardRef,
+  use,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
+
 import { updateRoom } from "@/app/server/actions/updateRoom"
-import { useState } from "react"
 
 type Props = {
   scheduleId: string
-  room: Room
+  room: Room | null
 }
 
-export default function ModalUpdateRoom({ scheduleId, room }: Props) {
-  const [showModal, setShowModal] = useState(false)
+const ModalUpdateRoomContext = createContext<{
+  ref: null | RefObject<HTMLDialogElement>
+  setModalState: Dispatch<SetStateAction<Props>>
+}>({
+  ref: null,
+  setModalState: () => null,
+})
+
+export const useUpdateRoomModal = ({ scheduleId, room }: Props) => {
+  const { ref, setModalState } = useContext(ModalUpdateRoomContext)
+
+  if (ref === null)
+    return {
+      open: () => null,
+      close: () => null,
+    }
+
+  return {
+    open: () => {
+      setModalState({ scheduleId, room })
+      ref.current?.showModal()
+    },
+    close: () => {
+      ref.current?.close()
+    },
+  }
+}
+
+export const ModalUpdateRoomButton = ({ scheduleId, room }: Props) => {
+  const { open } = useUpdateRoomModal({
+    scheduleId,
+    room,
+  })
 
   return (
-    <>
-      <button
-        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        type="button"
-        onClick={() => setShowModal(true)}
-      >
-        Edit
-      </button>
+    <button
+      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+      type="button"
+      onClick={() => open()}
+    >
+      Edit
+    </button>
+  )
+}
 
-      {createPortal(
+export const ModalUpdateRoomContextProvider = ({ children }: any) => {
+  const ref = useRef<HTMLDialogElement>(null)
+  const [modalState, setModalState] = useState<Props>({
+    scheduleId: "",
+    room: null,
+  })
+
+  return (
+    <ModalUpdateRoomContext.Provider value={{ ref, setModalState }}>
+      <ModalUpdateRoom
+        scheduleId={modalState.scheduleId}
+        room={modalState.room}
+        ref={ref}
+      />
+      {children}
+    </ModalUpdateRoomContext.Provider>
+  )
+}
+
+export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
+  function ModalUpdateRoom({ scheduleId, room }, ref) {
+    const [activeInSchedule, setActiveInSchedule] = useState(
+      room?.activeInSchedule || false
+    )
+
+    useEffect(() => {
+      if (room) setActiveInSchedule(room.activeInSchedule)
+    }, [room])
+
+    return (
+      <>
         <dialog
           className="w-full max-w-md max-h-full bg-transparent z-20 top-0 bottom-0"
-          open={showModal}
+          ref={ref}
         >
           <div className="bg-white rounded-lg shadow-lg dark:bg-gray-700">
             <header className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -36,7 +108,10 @@ export default function ModalUpdateRoom({ scheduleId, room }: Props) {
               <button
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  // @ts-ignore
+                  if (ref && ref.current) ref.current.close()
+                }}
               >
                 <svg
                   className="w-3 h-3"
@@ -60,55 +135,64 @@ export default function ModalUpdateRoom({ scheduleId, room }: Props) {
               className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"
               action={(formData) => {
                 updateRoom(formData)
-                setShowModal(false)
+                // @ts-ignore
+                if (ref && ref.current) ref.current.close()
               }}
             >
               <input type="hidden" name="scheduleId" value={scheduleId} />
-              <input type="hidden" name="roomId" value={room.id} />
+              {room && <input type="hidden" name="roomId" value={room?.id} />}
               <div className="flex flex-col">
-                <label className="text-md dark:text-white" htmlFor="email">
+                <label className="text-md dark:text-white" htmlFor="roomNr">
                   Room Number
                 </label>
                 <input
                   type="number"
-                  defaultValue={room.roomNr}
+                  defaultValue={room?.roomNr}
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
+                  id="roomNr"
                   name="roomNr"
                   required
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-md dark:text-white" htmlFor="email">
+                <label className="text-md dark:text-white" htmlFor="firstName">
                   First Name
                 </label>
                 <input
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
+                  id="firstName"
                   name="firstName"
-                  defaultValue={room.User?.firstName}
+                  defaultValue={room?.User.firstName}
                   required
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-md dark:text-white" htmlFor="email">
+                <label className="text-md dark:text-white" htmlFor="lastName">
                   Last Name
                 </label>
                 <input
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
                   name="lastName"
-                  defaultValue={room.User?.lastName}
+                  id="lastName"
+                  defaultValue={room?.User.lastName}
                   required
                 />
               </div>
-              <div className="flex flex-col">
-                <label className="text-md dark:text-white" htmlFor="email">
+              <div className="flex justify-between items-center">
+                <label
+                  className="text-md dark:text-white"
+                  htmlFor="inCleaningSchedule"
+                >
                   In Schedule Rotation
                 </label>
                 <input
                   type="checkbox"
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
+                  id="inCleaningSchedule"
                   name="inCleaningSchedule"
-                  aria-checked={room.activeInSchedule}
-                  defaultChecked={room.activeInSchedule}
+                  aria-checked={activeInSchedule}
+                  checked={activeInSchedule}
+                  onChange={(e) => setActiveInSchedule(e.target.checked)}
                 />
               </div>
 
@@ -118,13 +202,10 @@ export default function ModalUpdateRoom({ scheduleId, room }: Props) {
               >
                 Update Room
               </button>
-
-              {/* <Messages /> */}
             </form>
           </div>
-        </dialog>,
-        document.body
-      )}
-    </>
-  )
-}
+        </dialog>
+      </>
+    )
+  }
+)

@@ -64,7 +64,7 @@ export const InviteModalButton = ({ scheduleId, user }: Props) => {
   )
 }
 
-export const ModalContextProvider = ({ children }: any) => {
+export const ModalInviteUserContextProvider = ({ children }: any) => {
   const ref = useRef<HTMLDialogElement>(null)
   const [modalState, setModalState] = useState<Props>({
     scheduleId: "",
