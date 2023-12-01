@@ -1,3 +1,5 @@
+"use client"
+
 import { ModalUpdateRoomButton } from "./ModalUpdateRoom"
 import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { deleteRoom } from "@/app/server/actions/deleteRoom"
