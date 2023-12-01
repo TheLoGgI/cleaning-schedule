@@ -10,7 +10,6 @@ type Props = {
 export const ActionsColumn = ({ room, scheduleId }: Props) => {
   return (
     <td className="px-6 py-4">
-      {/* <ModalUpdateRoom room={room} scheduleId={scheduleId} /> */}
       <ModalUpdateRoomButton room={room} scheduleId={scheduleId} />
       <form action={deleteRoom} className="inline-block">
         <input type="hidden" name="roomId" value={room.id} />

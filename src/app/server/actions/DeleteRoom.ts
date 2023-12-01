@@ -8,6 +8,8 @@ export async function deleteRoom(formData: FormData) {
   const scheduleId = formData.get("scheduleId")
   const roomId = formData.get("roomId")
 
+  // TODO: check if user is admin
+
   const supabase = createServerComponentClient(
     { cookies },
     {
@@ -26,11 +28,10 @@ export async function deleteRoom(formData: FormData) {
   // TODO: check if scheduleId exists eg. params.id
 
   try {
-    const deletedRoom = await supabase
+    await supabase
       .from("Room")
       .delete()
       .match({ id: roomId, scheduleID: scheduleId })
-      .explain()
 
     revalidatePath("/schedule/[id]", "page")
   } catch (error) {
