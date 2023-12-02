@@ -6,6 +6,7 @@ import { PendingButton } from "./pendingButton"
 import { getDomainUrl } from "@/app/helpers/getUrl"
 import { signUpRegistration } from "@/app/server/actions/signUpRegistration"
 import { useFormState } from "react-dom"
+import { useSearchParams } from "next/navigation"
 
 const initialState = {
   message: null,
@@ -13,6 +14,12 @@ const initialState = {
 
 export default function SignUpRegistrationForm() {
   const [state, formAction] = useFormState(signUpRegistration, initialState)
+  const searchParams = useSearchParams()
+
+  const scheduleId = searchParams.get("scheduleId")
+  console.log("scheduleId: ", scheduleId)
+  const inviteCode = searchParams.get("inviteCode")
+  console.log("inviteCode: ", inviteCode)
 
   return (
     <>
@@ -29,6 +36,12 @@ export default function SignUpRegistrationForm() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" action={formAction}>
+            {scheduleId && (
+              <input type="hidden" name="scheduleId" value={scheduleId} />
+            )}
+            {inviteCode && (
+              <input type="hidden" name="inviteCode" value={inviteCode} />
+            )}
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <div>
                 <label

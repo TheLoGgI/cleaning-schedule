@@ -2,10 +2,6 @@
 
 import { SupabaseClient, UserResponse } from "@supabase/supabase-js"
 
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { randomUUID } from "crypto"
-
 const deleteRoomUser = {
   id: "empty",
   activeInSchedule: true,

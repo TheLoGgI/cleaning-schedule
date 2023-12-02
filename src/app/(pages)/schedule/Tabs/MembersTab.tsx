@@ -3,6 +3,7 @@ import {
   ModalInviteUserContextProvider,
 } from "../ModalInviteUser"
 
+import { InviteMembersButton } from "@/app/components/InviteMembersButton"
 import { TabPanel } from "@/app/components/Tab"
 
 const MembersTab = ({
@@ -14,6 +15,11 @@ const MembersTab = ({
 }) => {
   return (
     <TabPanel>
+      <div className="flex justify-between items-center my-10">
+        <InviteMembersButton scheduleId={scheduleId} />
+        <p>{users.length} Members</p>
+      </div>
+
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <ModalInviteUserContextProvider>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
