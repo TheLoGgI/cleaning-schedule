@@ -1,11 +1,11 @@
-import ScheduleTab, { ScheduleTable } from "../Tabs/ScheduleTab"
-
 import { AuthUser } from "@supabase/supabase-js"
 import Link from "next/link"
 import MembersTab from "../Tabs/MembersTab"
 import ModalUpdateSchedule from "../ModalUpdateSchedule"
 import { Role } from "@/app/components/EnumRole"
 import RoomTab from "../Tabs/RoomsTab"
+import ScheduleTab from "../Tabs/ScheduleTab"
+import { ScheduleTable } from "../Tabs/scheduleTable"
 import TabNav from "./TabNav"
 import { TabPanels } from "@/app/components/Tab"
 import { cookies } from "next/headers"
@@ -62,7 +62,7 @@ export default async function Page({
     )
   }
 
-  const role = await supabase
+  const scheduleRole = await supabase
     .from("ScheduleRole")
     .select("role")
     .match({
@@ -71,9 +71,11 @@ export default async function Page({
     })
     .single()
 
-  const isUserAdmin =
-    role.data?.role ===
-    Role.Admin /* || Role[role.data?.role as keyof typeof Role] === Role.Moderator */
+  const userRole = scheduleRole.data
+    ? Role[scheduleRole.data?.role as keyof typeof Role]
+    : Role.User
+
+  const isUserAdmin = userRole === Role.Admin
 
   const rooms = await supabase
     .from("Room")
@@ -88,6 +90,9 @@ export default async function Page({
 
   const users = (rooms.data?.map((room) => room.User) ||
     []) as unknown as User[]
+
+  const isAdminOrModerator =
+    userRole === Role.Admin || userRole === Role.Moderator
 
   return (
     <section className="container max-w-screen-lg mx-auto py-4 px-8">
@@ -110,9 +115,11 @@ export default async function Page({
         </p>
       </header>
 
-      <TabNav>
+      <TabNav userRole={userRole}>
         <TabPanels>
-          <MembersTab users={users} scheduleId={params.id} />
+          {isAdminOrModerator && (
+            <MembersTab users={users} scheduleId={params.id} />
+          )}
           <RoomTab
             rooms={rooms.data as unknown as Room[]}
             scheduleId={params.id}
@@ -121,7 +128,9 @@ export default async function Page({
             rooms={rooms.data as unknown as Room[]}
             scheduleId={params.id}
             startingWeek={schedule.startingWeek}
-          />
+          >
+            <ScheduleTable scheduleId={params.id} />
+          </ScheduleTab>
         </TabPanels>
       </TabNav>
     </section>

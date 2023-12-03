@@ -1,3 +1,5 @@
+"use server"
+
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { revalidatePath } from "next/cache"
@@ -33,7 +35,6 @@ function shuffleRooms(rooms: Room[]): Room[] {
 }
 
 export async function generateSchedule(formData: FormData) {
-  "use server"
   const scheduleId = String(formData.get("scheduleId"))
   const startingWeek = Number(formData.get("startingWeek"))
 

@@ -17,6 +17,7 @@ export default function ModalInsertScheduleRow({
   scheduleId,
   weekNr,
 }: Props) {
+  console.log("rooms: ", rooms)
   // const [showModal, setShowModal] = useState(false)
   const [scheduleWeek, setScheduleWeek] = useState(weekNr + 1)
   const formRef = useRef<HTMLFormElement>(null)

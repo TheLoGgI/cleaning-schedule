@@ -1,4 +1,5 @@
-import { AuthUser } from "@supabase/supabase-js"
+import { AuthUser, PostgrestSingleResponse } from "@supabase/supabase-js"
+
 import Link from "next/link"
 import ModalCreateDashboard from "./ModalCreateDashboard"
 import { cookies } from "next/headers"
@@ -6,19 +7,36 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
 // export const dynamic = 'force-dynamic'
 
-export default async function Login() {
+type UserWithSchedules = {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  authId: string
+  premium: boolean
+  schedules: {
+    id: string
+    name: string
+    startingWeek: number
+    isActive: boolean
+  }[]
+}
+
+export default async function Dashboard() {
   // const supabase = createSupabaseAuthServerClient()
   const supabase = createServerComponentClient({ cookies })
 
   // TODO: give feedback for failed user
   const authUser = await supabase.auth.getUser()
-  const currentUser = await supabase
-    .from("User")
-    .select("*")
-    .eq("authId", authUser.data.user?.id as string)
-    .single()
 
-  const isPremium = currentUser.data?.premium
+  const currentUser = (await supabase
+    .from("User")
+    .select(`*, schedules: Room( ...Schedule(*))`)
+    .eq("authId", authUser.data.user?.id as string)
+    .single()) as unknown as PostgrestSingleResponse<UserWithSchedules>
+
+  console.log("currentUser.data: ", currentUser.data)
+  const isPremium = currentUser.data?.premium || false
 
   if (authUser.data.user === null || currentUser === null) {
     return (
@@ -38,10 +56,16 @@ export default async function Login() {
   }
 
   // TODO: failed to load schedules
-  const { data: schedules } = await supabase
+  const ownedSchedules = await supabase
     .from("Schedule")
     .select("*")
     .eq("createdBy", currentUser.data?.id as string)
+
+  console.log("ownedSchedules: ", ownedSchedules)
+  const availableSchedules = [
+    ...(ownedSchedules.data ?? []),
+    ...(currentUser.data?.schedules ?? []),
+  ]
 
   return (
     <section className="container max-w-screen-lg mx-auto">
@@ -56,15 +80,14 @@ export default async function Login() {
         {/* </ModalCreateDashboard> */}
       </div>
 
-      {Array.isArray(schedules) && schedules?.length !== 0 ? (
+      {Array.isArray(availableSchedules) && availableSchedules?.length !== 0 ? (
         <div className="px-4 text-lg">
-          <div className="grid grid-cols-4 border-b-2 border-gray-200 mb-4">
+          <div className="grid grid-cols-4 border-b-2 border-gray-200 mb-4 px-4">
             <p className="font-semibold">Schedule Name</p>
-            <p className="font-semibold">Nr. Rooms</p>
             <p className="font-semibold">Starting Week</p>
             <p className="font-semibold">isActive</p>
           </div>
-          {schedules?.map((schedule) => {
+          {availableSchedules.map((schedule) => {
             return (
               <Link
                 key={schedule.name + schedule.id}
@@ -72,7 +95,6 @@ export default async function Login() {
                 className="grid grid-cols-4 p-4 border-b-2 border-gray-200 hover:bg-gray-200"
               >
                 <p>{schedule.name}</p>
-                <p>0</p>
                 <p>{schedule.startingWeek}</p>
                 <input
                   readOnly

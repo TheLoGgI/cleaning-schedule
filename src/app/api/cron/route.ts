@@ -28,6 +28,7 @@ export async function GET(request: Request) {
   const currentWeekNumber = getWeekNumber(today)
 
   const supabase = createServerComponentClient({ cookies })
+  // TOOD: FIX This query
   const nextWeekScheduleRows = await supabase
     .from("ScheduleRow")
     .select(

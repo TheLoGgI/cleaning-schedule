@@ -33,7 +33,7 @@ export const getSchedule = async (
       `
       id,
       weekNr,
-        room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
+      room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
       `
     )
     .eq("scheduleId", scheduleId)

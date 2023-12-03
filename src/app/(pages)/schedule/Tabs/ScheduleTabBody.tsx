@@ -1,8 +1,10 @@
 "use client"
 
+import { Role } from "@/app/components/EnumRole"
 import { swapScheduleRoomsRow } from "@/app/server/actions/swapScheduleRoomsRow"
 import { twMerge } from "tailwind-merge"
 import { useState } from "react"
+import { useUserRole } from "@/app/hooks/useUserRole"
 
 const RoomCellAdmin = ({
   room,
@@ -55,8 +57,6 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
       : [...selectedRoomSwap, { scheduleRowId: room.row, weekNr }]
 
     if (newState.length == 2) {
-      console.log("newState: ", newState)
-
       await swapScheduleRoomsRow(schedule.scheduleId, [
         newState[0],
         newState[1],
@@ -99,7 +99,6 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
 }
 
 export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
-  console.log("schedule: ", schedule)
   return (
     <tbody>
       {schedule.weeks.map((row: any) => {
@@ -126,5 +125,18 @@ const RoomCell = ({ room }: { room: Room }) => {
         ? "Empty"
         : `${room.roomNr}: ${room.User?.firstName} ${room.User?.lastName}`}
     </td>
+  )
+}
+
+export const DisplayTableBody = ({ schedule }: { schedule: Schedule }) => {
+  const userRole = useUserRole()
+
+  const isUserAdminOrModerator =
+    userRole === Role.Admin || userRole === Role.Moderator
+
+  return isUserAdminOrModerator ? (
+    <ScheduleTabBodyAdmin schedule={schedule} />
+  ) : (
+    <ScheduleTabBody schedule={schedule} />
   )
 }

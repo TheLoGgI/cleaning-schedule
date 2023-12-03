@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "types": "supabase gen types typescript --project-id jcdoxwlbxpofoussndlc > src/app/types/supabase.ts",
     "email": "email dev --dir src/app/components/emails"
   },
   "dependencies": {
