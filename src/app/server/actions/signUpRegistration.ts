@@ -15,7 +15,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
   // Optional
   const scheduleId = String(formData.get("scheduleId"))
   const inviteCode = String(formData.get("inviteCode"))
-  const hasInvitationCode = scheduleId && inviteCode
+  const hasInvitationCode = !(scheduleId !== null && inviteCode !== null)
 
   if (!email) return { error: "Please enter email" }
   if (!firstName) return { error: "First name is required" }
