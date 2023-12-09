@@ -71,12 +71,9 @@ export default async function Page({
     })
     .single()
 
-  console.log("scheduleRole: ", scheduleRole)
   const userRole = scheduleRole.data ? scheduleRole.data?.role : Role.User
-  console.log("scheduleRole.data?.role: ", scheduleRole.data?.role)
 
   const isUserAdmin = userRole === Role.Admin
-  console.log("isUserAdmin: ", isUserAdmin)
 
   const rooms = await supabase
     .from("Room")

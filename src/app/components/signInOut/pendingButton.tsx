@@ -14,7 +14,6 @@ type PendingProps = {
 export const PendingButton = (props: PendingProps) => {
   const { children, ...rest } = props
   const { pending, ...status } = useFormStatus()
-  console.log("status: ", status)
 
   const pendingMotion = props.loading || <Spinner width="20" height="20" />
 

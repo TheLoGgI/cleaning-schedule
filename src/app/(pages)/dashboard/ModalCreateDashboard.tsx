@@ -34,7 +34,6 @@ export default function ModalCreateDashboard({
 
   const [startingWeek, setStartingWeek] = useState<number>(currentWeekNumber)
   const [state, formAction] = useFormState(createSchedule, initialState)
-  console.log("state: ", state)
 
   return (
     <>

@@ -50,8 +50,6 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
       .eq("scheduleId", scheduleId)
       .single()
 
-    console.log("doesInviteCodeExists: ", doesInviteCodeExists)
-
     const expireTime = new Date(doesInviteCodeExists.data.created_at)
     expireTime.setDate(expireTime.getDate() + 1)
 
@@ -105,8 +103,6 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     })
     .select("id")
     .single()
-
-  console.log("createNewUser: ", createNewUser)
 
   if (createNewUser.error) return { error: createNewUser.error.message }
 

@@ -72,13 +72,5 @@ export async function GET(request: Request) {
     )
   }
 
-  // try {
-
-  // console.log("responseResend: ", responseResend)
-
-  //   return NextResponse.json(null, { status: 200 })
-  // } catch (error) {
-  //   console.error("error: ", error)
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
-  // }
 }

@@ -15,7 +15,6 @@ const MembersTab = ({
   users: User[]
   scheduleId: string
 }) => {
-  console.log("users: ", users)
   return (
     <TabPanel>
       <div className="flex justify-between items-center my-10">

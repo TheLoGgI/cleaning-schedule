@@ -37,7 +37,7 @@ export async function swapScheduleRoomsRow(
   // First Room
 
   try {
-    const swap1 = await supabase
+    await supabase
       .from("ScheduleRow")
       .update({
         weekNr: scheduleSwap[1].weekNr,
@@ -47,9 +47,8 @@ export async function swapScheduleRoomsRow(
         id: scheduleSwap[0].scheduleRowId,
       })
       .explain()
-    console.log("swap1: ", swap1)
 
-    const swap2 = await supabase
+    await supabase
       .from("ScheduleRow")
       .update({
         weekNr: scheduleSwap[0].weekNr,
@@ -59,7 +58,6 @@ export async function swapScheduleRoomsRow(
         id: scheduleSwap[1].scheduleRowId,
       })
       .explain()
-    console.log("swap2: ", swap2)
   } catch (error) {
     console.warn("error: ", error)
   }

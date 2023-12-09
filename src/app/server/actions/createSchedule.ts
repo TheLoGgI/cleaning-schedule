@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache"
 // import { useRouter } from 'next/router'
 
 export async function createSchedule(prevState: any, formData: FormData) {
-  console.log("prevState: ", prevState)
   const scheduleName = String(formData.get("scheduleName"))
   const authId = String(formData.get("authId"))
   const startingWeek = Number(formData.get("startingWeek"))
@@ -56,17 +55,7 @@ export async function createSchedule(prevState: any, formData: FormData) {
       }
     }
 
-    // if (newSchedule.error) {
-    //   return NextResponse.redirect(
-    //     `${requestUrl.origin}/login?error=Failed to create schedule`,
-    //     {
-    //       // a 301 status is required to redirect from a POST to a GET route
-    //       status: 301,
-    //     },
-    //   )
-    // }
-
-    const scheduleRole = await supabase.from("ScheduleRole").insert({
+    await supabase.from("ScheduleRole").insert({
       userId: currentUser.data.id,
       role: Role.Admin,
       scheduleId: newSchedule.data.id,

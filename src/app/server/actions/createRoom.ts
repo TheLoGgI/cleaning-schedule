@@ -35,7 +35,7 @@ export async function createRoom(formData: FormData) {
 
     //
   } catch (error) {
-    console.log("error: ", error)
+    console.warn("error: ", error)
   }
 
   revalidatePath("/schedule/[id]", "page")
