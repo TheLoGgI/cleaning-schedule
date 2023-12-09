@@ -7,7 +7,8 @@ import { revalidatePath } from "next/cache"
 
 // import { useRouter } from 'next/router'
 
-export async function createSchedule(formData: FormData) {
+export async function createSchedule(prevState: any, formData: FormData) {
+  console.log("prevState: ", prevState)
   const scheduleName = String(formData.get("scheduleName"))
   const authId = String(formData.get("authId"))
   const startingWeek = Number(formData.get("startingWeek"))
@@ -16,7 +17,10 @@ export async function createSchedule(formData: FormData) {
 
   try {
     if (!scheduleName || !startingWeek) {
-      throw new Error("Missing scheduleName or startingWeek")
+      return {
+        status: 500,
+        body: "Missing scheduleName or startingWeek",
+      }
     }
 
     // TODO: FIX AUTH ID
@@ -28,9 +32,10 @@ export async function createSchedule(formData: FormData) {
     //   .eq('authId', 'd1c4923c-658b-4f1a-b310-ddcaad051af5')
 
     if (currentUser.error) {
-      throw new Error(
-        "Could not find user: " + JSON.stringify(currentUser.error)
-      )
+      return {
+        status: 500,
+        body: "Could not find user: " + JSON.stringify(currentUser.error),
+      }
     }
 
     const newSchedule = await supabase
@@ -44,9 +49,11 @@ export async function createSchedule(formData: FormData) {
       .single()
 
     if (newSchedule.error) {
-      throw new Error(
-        "Could not insert new schedule: " + JSON.stringify(newSchedule.error)
-      )
+      return {
+        status: 500,
+        body:
+          "Could not insert new schedule: " + JSON.stringify(newSchedule.error),
+      }
     }
 
     // if (newSchedule.error) {
@@ -66,14 +73,15 @@ export async function createSchedule(formData: FormData) {
       authId,
     })
     revalidatePath("/dashboard", "page")
+    return {
+      status: 200,
+      body: "Successfully created schedule",
+    }
   } catch (error) {
     console.warn(error)
-    // return redirect(
-    //   `${requestUrl.origin}/login?error=Failed to create schedule`,
-    //   {
-    //     // a 301 status is required to redirect from a POST to a GET route
-    //     status: 301,
-    //   },
-    // )
+    return {
+      status: 500,
+      body: "Failed to create schedule",
+    }
   }
 }

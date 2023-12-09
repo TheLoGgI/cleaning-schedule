@@ -9,7 +9,6 @@ import { revalidatePath } from "next/cache"
 
 export async function insertScheduleRow(formData: FormData) {
   const scheduleId = String(formData.get("scheduleId"))
-  // const authId = String(formData.get("authId"))
   const weekNr = Number(formData.get("weekNr"))
   const cleaner1 = String(formData.get("cleaner1"))
   const cleaner2 = String(formData.get("cleaner2"))
@@ -61,13 +60,6 @@ export async function insertScheduleRow(formData: FormData) {
 
     revalidatePath("/dashboard", "page")
   } catch (error) {
-    console.log(error)
-    // return redirect(
-    //   `${requestUrl.origin}/login?error=Failed to create schedule`,
-    //   {
-    //     // a 301 status is required to redirect from a POST to a GET route
-    //     status: 301,
-    //   },
-    // )
+    console.warn(error)
   }
 }

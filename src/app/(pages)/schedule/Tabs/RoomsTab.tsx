@@ -37,51 +37,63 @@ const RoomTab = ({
             </p>
           </div>
 
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Room Number
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Member Name
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    In Schedule
-                  </th>
-                  {isAdminOrModerator && (
+          {rooms.length > 0 && (
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
                     <th scope="col" className="px-6 py-3">
-                      Action
+                      Room Number
                     </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {rooms.map((room) => {
-                  return (
-                    <tr
-                      key={room.id}
-                      className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
-                    >
-                      <td className="px-6 py-4">{room.roomNr} </td>
-                      <td className="px-6 py-4 text-black">
-                        {room.User === null
-                          ? "Empty"
-                          : `${room.User.firstName} ${room.User.lastName}`}
-                      </td>
-                      <td className="px-6 py-4 text-black">
-                        {room.activeInSchedule ? "Active" : "Inactive"}{" "}
-                      </td>
-                      {isAdminOrModerator && (
-                        <ActionsColumn room={room} scheduleId={scheduleId} />
-                      )}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+                    <th scope="col" className="px-6 py-3">
+                      Member Name
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      In Schedule
+                    </th>
+                    {isAdminOrModerator && (
+                      <th scope="col" className="px-6 py-3">
+                        Action
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rooms.map((room) => {
+                    return (
+                      <tr
+                        key={room.id}
+                        className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
+                      >
+                        <td className="px-6 py-4">{room.roomNr} </td>
+                        <td className="px-6 py-4 text-black">
+                          {room.User === null
+                            ? "Empty"
+                            : `${room.User.firstName} ${room.User.lastName}`}
+                        </td>
+                        <td className="px-6 py-4 text-black">
+                          {room.activeInSchedule ? "Active" : "Inactive"}{" "}
+                        </td>
+                        {isAdminOrModerator && (
+                          <ActionsColumn room={room} scheduleId={scheduleId} />
+                        )}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {rooms.length === 0 && (
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <p className="text-2xl font-semibold">No Rooms</p>
+              <p className="text-gray-500 max-w-sm text-center">
+                Invite members to your schedule in the members tab or add rooms
+                to start planning
+              </p>
+            </div>
+          )}
         </ModalUpdateRoomContextProvider>
       </TabPanel>
     </>

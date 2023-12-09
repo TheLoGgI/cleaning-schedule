@@ -1,4 +1,8 @@
 import { AuthUser, PostgrestSingleResponse } from "@supabase/supabase-js"
+import {
+  ModalDeleteScheduleButton,
+  ModalDeleteScheduleContextProvider,
+} from "./ModalDeleteDashboard"
 
 import Link from "next/link"
 import ModalCreateDashboard from "./ModalCreateDashboard"
@@ -22,6 +26,10 @@ type UserWithSchedules = {
   }[]
 }
 
+function uniqByKeepLast<T>(a: Array<T>, key: (val: T) => T) {
+  return [...new Map(a.map((x) => [key(x), x])).values()]
+}
+
 export default async function Dashboard() {
   // const supabase = createSupabaseAuthServerClient()
   const supabase = createServerComponentClient({ cookies })
@@ -35,7 +43,6 @@ export default async function Dashboard() {
     .eq("authId", authUser.data.user?.id as string)
     .single()) as unknown as PostgrestSingleResponse<UserWithSchedules>
 
-  console.log("currentUser.data: ", currentUser.data)
   const isPremium = currentUser.data?.premium || false
 
   if (authUser.data.user === null || currentUser === null) {
@@ -55,57 +62,70 @@ export default async function Dashboard() {
     )
   }
 
+  // TODO: give edit rights for owners and admins
   // TODO: failed to load schedules
   const ownedSchedules = await supabase
     .from("Schedule")
     .select("*")
     .eq("createdBy", currentUser.data?.id as string)
 
-  console.log("ownedSchedules: ", ownedSchedules)
-  const availableSchedules = [
-    ...(ownedSchedules.data ?? []),
-    ...(currentUser.data?.schedules ?? []),
-  ]
+  const availableSchedules = uniqByKeepLast(
+    [...(ownedSchedules.data ?? []), ...(currentUser.data?.schedules ?? [])],
+    (schedule) => schedule.id
+  )
 
   return (
     <section className="container max-w-screen-lg mx-auto">
       <div className="flex align-center justify-between p-4">
         <h1 className="text-2xl">Dashboard</h1>
         <ModalCreateDashboard
-          // title="Create new Dashboard"
           user={authUser.data.user as AuthUser}
           isPremium={isPremium}
         />
-
-        {/* </ModalCreateDashboard> */}
       </div>
 
       {Array.isArray(availableSchedules) && availableSchedules?.length !== 0 ? (
         <div className="px-4 text-lg">
-          <div className="grid grid-cols-4 border-b-2 border-gray-200 mb-4 px-4">
-            <p className="font-semibold">Schedule Name</p>
-            <p className="font-semibold">Starting Week</p>
-            <p className="font-semibold">isActive</p>
+          <div className="flex justify-between border-b-2 border-gray-200">
+            <div className="grid grid-cols-4  mb-4 px-4 flex-grow">
+              <p className="font-semibold">Schedule Name</p>
+              <p className="font-semibold">Starting Week</p>
+              <p className="font-semibold">isActive</p>
+            </div>
+            <div className="invisible pr-4">delete</div>
+            {/* For matching the columns with the header columns */}
           </div>
-          {availableSchedules.map((schedule) => {
-            return (
-              <Link
-                key={schedule.name + schedule.id}
-                href={`/schedule/${schedule.id}`}
-                className="grid grid-cols-4 p-4 border-b-2 border-gray-200 hover:bg-gray-200"
-              >
-                <p>{schedule.name}</p>
-                <p>{schedule.startingWeek}</p>
-                <input
-                  readOnly
-                  type="checkbox"
-                  checked={schedule.isActive}
-                  name="isActive"
-                  className="text-blue-500 accent-current w-6"
-                />
-              </Link>
-            )
-          })}
+          <ModalDeleteScheduleContextProvider>
+            {availableSchedules.map((schedule) => {
+              return (
+                <div
+                  key={schedule.name + schedule.id}
+                  className="flex justify-between items-center border-b-2 border-gray-200 hover:bg-gray-200"
+                >
+                  <Link
+                    href={`/schedule/${schedule.id}`}
+                    className="grid grid-cols-4 p-4 pr-0 flex-grow"
+                  >
+                    <p>{schedule.name}</p>
+                    <p>{schedule.startingWeek}</p>
+                    <input
+                      readOnly
+                      type="checkbox"
+                      checked={schedule.isActive}
+                      name="isActive"
+                      className="text-blue-500 accent-current w-6"
+                    />
+                  </Link>
+                  <div className="p-4">
+                    <ModalDeleteScheduleButton
+                      schedule={schedule as DashboardSchedule}
+                      authId={authUser.data.user?.id as AuthUser["id"]}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </ModalDeleteScheduleContextProvider>
         </div>
       ) : (
         <div className="px-4 text-lg">

@@ -39,7 +39,12 @@ const ScheduleTab = ({
               <input type="hidden" name="startingWeek" value={startingWeek} />
               <PendingButton
                 type="submit"
-                className="border-2 border-blue-700 hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                disabled={rooms.length === 0}
+                title={
+                  rooms.length === 0 &&
+                  "You need at least one room to generate a schedule"
+                }
+                className="border-2 border-blue-700 hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:border-none disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Generate Schedule
               </PendingButton>
@@ -49,7 +54,16 @@ const ScheduleTab = ({
         <PrintButton />
       </div>
 
-      {children}
+      {rooms.length > 0 && { children }}
+      {rooms.length === 0 && (
+        <div className="flex flex-col items-center justify-center w-full h-full">
+          <p className="text-2xl font-semibold">No Rooms</p>
+          <p className="text-gray-500 max-w-sm text-center">
+            Invite members to your schedule in the members tab or add rooms to
+            start planning
+          </p>
+        </div>
+      )}
     </TabPanel>
   )
 }

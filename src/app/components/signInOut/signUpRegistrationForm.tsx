@@ -3,7 +3,6 @@
 import CleaningLogo from "../CleaningLogo"
 import Messages from "@/app/(pages)/login/messages"
 import { PendingButton } from "./pendingButton"
-import { getDomainUrl } from "@/app/helpers/getUrl"
 import { signUpRegistration } from "@/app/server/actions/signUpRegistration"
 import { useFormState } from "react-dom"
 import { useSearchParams } from "next/navigation"
@@ -17,11 +16,7 @@ export default function SignUpRegistrationForm() {
   const searchParams = useSearchParams()
 
   const scheduleId = searchParams.get("scheduleId")
-  console.log("scheduleId: ", scheduleId)
   const inviteCode = searchParams.get("inviteCode")
-  console.log("inviteCode: ", inviteCode)
-
-  const isClient = typeof window !== "undefined"
 
   return (
     <>
@@ -93,7 +88,7 @@ export default function SignUpRegistrationForm() {
                   id="email"
                   name="email"
                   type="email"
-                  autoComplete={isClient ? "email" : "off"}
+                  autoComplete="email"
                   required
                   className="block w-full rounded-md border-0 py-2 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />

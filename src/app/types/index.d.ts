@@ -34,6 +34,7 @@ type DashboardSchedule = {
   isActive: boolean
   createdBy: string
 }
+
 type Week = {
   weekNr: number
   rooms: Room[]
