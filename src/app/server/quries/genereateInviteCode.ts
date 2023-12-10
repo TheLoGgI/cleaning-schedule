@@ -8,14 +8,25 @@ export const generateInviteCode = async (scheduleId: string) => {
 
   const supabase = createServerComponentClient({ cookies })
 
-  try {
-    await supabase
+  const inviteKey = await supabase.from("InviteKey").upsert(
+    { scheduleId, key: generatedCode },
+    {
+      onConflict: "scheduleId",
+    }
+  )
+
+  if (inviteKey.error) {
+    const existingInviteKey = await supabase
       .from("InviteKey")
-      .insert([{ scheduleId, key: generatedCode }])
-    return generatedCode
-  } catch (error) {
-    console.warn("error: ", error)
+      .select("key")
+      .eq("scheduleId", scheduleId)
+      .single()
+    console.info("used existing key: ", existingInviteKey)
+
+    if (existingInviteKey.error) return null
+
+    return existingInviteKey.data?.key
   }
 
-  return null
+  return generatedCode
 }
