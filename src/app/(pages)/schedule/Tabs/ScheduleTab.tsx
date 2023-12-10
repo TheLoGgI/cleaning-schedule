@@ -4,7 +4,6 @@ import ModalInsertScheduleRow from "../ModalInsertScheduleRow"
 import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { PrintButton } from "@/app/components/PrintButton"
 import { Role } from "@/app/components/EnumRole"
-import { ScheduleTable } from "./scheduleTable"
 import { TabPanel } from "@/app/components/Tab"
 import { generateSchedule } from "../../../server/actions/generateSchedule"
 import { useUserRole } from "@/app/hooks/useUserRole"
@@ -54,7 +53,7 @@ const ScheduleTab = ({
         <PrintButton />
       </div>
 
-      {rooms.length > 0 && { children }}
+      {rooms.length > 0 && children}
       {rooms.length === 0 && (
         <div className="flex flex-col items-center justify-center w-full h-full">
           <p className="text-2xl font-semibold">No Rooms</p>

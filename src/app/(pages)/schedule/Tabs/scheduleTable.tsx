@@ -15,14 +15,14 @@ export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
     0
   ) as number
 
-  if (schedule === null) {
+  if (schedule === null || schedule.weeks.length === 0) {
     return (
-      <section className="container max-w-screen-lg mx-auto py-4 px-8">
-        <h1 className="text-2xl font-semibold">
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-center text-2xl font-semibold">
           No schedule has been created yet
-        </h1>
+        </p>
         <p className="text-gray-500">Ask your admin to create a schedule</p>
-      </section>
+      </div>
     )
   }
 

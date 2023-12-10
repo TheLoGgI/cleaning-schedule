@@ -21,11 +21,8 @@ export default function SignUpRegistrationForm() {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <CleaningLogo
-            className="mx-auto h-10 w-auto"
-            title="Cleaning Schedule"
-          />
+        <div className="sm:mx-auto">
+          <CleaningLogo className="mx-auto w-auto" title="Cleaning Schedule" />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Create your account
           </h2>

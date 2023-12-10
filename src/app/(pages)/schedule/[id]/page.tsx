@@ -93,8 +93,8 @@ export default async function Page({
     userRole === Role.Admin || userRole === Role.Moderator
 
   return (
-    <section className="container max-w-screen-lg mx-auto py-4 px-8">
-      <header>
+    <section className="container max-w-screen-lg mx-auto py-4 px-4">
+      <header className="mb-8">
         <h1 className="text-2xl font-semibold inline-block mr-4">
           {schedule.name}
           <span className="font-normal text-base ml-2 p-2 bg-gray-200 rounded print:hidden">

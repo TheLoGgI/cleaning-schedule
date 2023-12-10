@@ -116,11 +116,11 @@ export default function Header({ user }: { user: any }) {
                   ))}
               </div>
               {user !== null ? (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between gap-4">
                   Hey, {user.email}! <LogoutButton />
                 </div>
               ) : (
-                <div className="py-6">
+                <div className="py-6" onClick={() => setMobileMenuOpen(false)}>
                   <Link
                     href="/login"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"

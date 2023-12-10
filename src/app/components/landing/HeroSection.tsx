@@ -27,10 +27,10 @@ export default function HeroSection() {
             </div>
           </div> */}
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900">
               Simplify Your Cleaning Routine
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 lg:text-lg leading-8 text-gray-600">
               Creating a cleaning schedule from scratch can be time-consuming.
               By utilizing an automatic generator, you save precious time and
               effort. The schedule is readily generated based on predefined

@@ -87,13 +87,13 @@ export default async function Dashboard() {
       {Array.isArray(availableSchedules) && availableSchedules?.length !== 0 ? (
         <div className="px-4 text-lg">
           <div className="flex justify-between border-b-2 border-gray-200">
-            <div className="grid grid-cols-4  mb-4 px-4 flex-grow">
+            <div className="lg:grid lg:grid-cols-4  mb-4 px-4 flex-grow">
               <p className="font-semibold">Schedule Name</p>
-              <p className="font-semibold">Starting Week</p>
-              <p className="font-semibold">isActive</p>
+              <p className="font-semibold hidden lg:block">Starting Week</p>
+              <p className="font-semibold hidden lg:block">isActive</p>
             </div>
-            <div className="invisible pr-4">delete</div>
             {/* For matching the columns with the header columns */}
+            <div className="invisible pr-4">delete</div>
           </div>
           <ModalDeleteScheduleContextProvider>
             {availableSchedules.map((schedule) => {
@@ -104,17 +104,20 @@ export default async function Dashboard() {
                 >
                   <Link
                     href={`/schedule/${schedule.id}`}
-                    className="grid grid-cols-4 p-4 pr-0 flex-grow"
+                    className="lg:grid gap-10 lg:grid-cols-4 p-4 pr-0 flex-grow"
                   >
                     <p>{schedule.name}</p>
-                    <p>{schedule.startingWeek}</p>
-                    <input
+                    <p className="hidden lg:block">{schedule.startingWeek}</p>
+                    <p className="hidden lg:block">
+                      {String(schedule.isActive)}
+                    </p>
+                    {/* <input
                       readOnly
                       type="checkbox"
                       checked={schedule.isActive}
                       name="isActive"
                       className="text-blue-500 accent-current w-6"
-                    />
+                    /> */}
                   </Link>
                   <div className="p-4">
                     <ModalDeleteScheduleButton

@@ -17,7 +17,7 @@ export const ActionsColumn = ({ room, scheduleId }: Props) => {
         <PendingButton
           type="submit"
           name="roomId"
-          className="font-medium text-red-600 dark:text-red-500 hover:underline ml-2"
+          className="font-medium text-red-600 dark:text-red-500 hover:underline sm:ml-2 py-2 sm:py-0"
           loading={<span className="text-black">Deleting</span>}
         >
           Delete

@@ -56,7 +56,7 @@ export const ModalUpdateRoomButton = ({ scheduleId, room }: Props) => {
 
   return (
     <button
-      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+      className="font-medium text-blue-600 dark:text-blue-500 hover:underline py-2 sm:py-0"
       type="button"
       onClick={() => open()}
     >
