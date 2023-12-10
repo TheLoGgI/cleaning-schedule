@@ -1,6 +1,5 @@
 "use server"
 
-import { NextRequest } from "next/server"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { getDomainUrl } from "@/app/helpers/getUrl"
@@ -81,7 +80,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${domain}/auth/callback`,
+      emailRedirectTo: `${domain}` /* Does not seam to be used on localhost */,
       data: {
         firstName,
         lastName,
