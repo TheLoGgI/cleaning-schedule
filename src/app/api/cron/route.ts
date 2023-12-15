@@ -24,18 +24,17 @@ export async function GET(request: Request) {
   }
 
   // Get current week number
+
   const today = new Date()
   const currentWeekNumber = getWeekNumber(today)
 
   const supabase = createServerComponentClient({ cookies })
-  // TOOD: FIX This query
   const nextWeekScheduleRows = await supabase
     .from("ScheduleRow")
     .select(
       `
-      scheduleId,
-      roomOne: Room!ScheduleRow_roomOne_fkey(id, roomNr, User(id, firstName, lastName, email)),
-      roomTwo: Room!ScheduleRow_roomTwo_fkey(id, roomNr, User(id, firstName, lastName, email))
+    scheduleId,
+    room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
     `
     )
     .eq("weekNr", currentWeekNumber + 1)

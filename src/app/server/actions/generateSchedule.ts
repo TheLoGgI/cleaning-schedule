@@ -45,7 +45,7 @@ export async function generateSchedule(formData: FormData) {
   // Count rows in ScheduleRow for scheduleId
   const scheduleRows = await supabase
     .from("ScheduleRow")
-    .select("", { count: "exact", head: true })
+    .select("*", { count: "exact", head: true })
     .eq("scheduleId", scheduleId)
 
   if (scheduleRows.error) {

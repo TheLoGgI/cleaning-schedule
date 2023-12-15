@@ -12,8 +12,8 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
   const repeatedPassword = String(formData.get("re-password"))
 
   // Optional
-  const scheduleId = String(formData.get("scheduleId"))
-  const inviteCode = String(formData.get("inviteCode"))
+  const scheduleId = formData.get("scheduleId")
+  const inviteCode = formData.get("inviteCode")
   const hasInvitationCode = scheduleId !== null && inviteCode !== null
 
   if (!email) return { error: "Please enter email" }
@@ -52,7 +52,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
     const expireTime = new Date(doesInviteCodeExists.data.created_at)
     expireTime.setDate(expireTime.getDate() + 1)
 
-    const codeHasExpired = expireTime < new Date()
+    const codeHasExpired = expireTime > new Date()
     if (codeHasExpired) {
       return { error: "Sorry, your invitation as expired" }
     }
