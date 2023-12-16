@@ -28,7 +28,7 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
           const inviteCode = await generateInviteCode(scheduleId)
           if (inviteCode === null) return
           const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${inviteCode}`
-          await navigator.clipboard.writeText(templateURL)
+          navigator.clipboard.writeText(templateURL)
         }}
       >
         {isShowing ? (
