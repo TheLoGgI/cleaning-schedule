@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 import { EnvelopeIcon } from "@heroicons/react/24/outline"
-import { generateInviteCode } from "../server/quries/genereateInviteCode"
+import { generateInviteCode } from "../server/quries/generateInviteCode"
 
 type props = {
   scheduleId: string
@@ -28,7 +28,7 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
           const inviteCode = await generateInviteCode(scheduleId)
           if (inviteCode === null) return
           const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${inviteCode}`
-          navigator.clipboard.writeText(templateURL)
+          await navigator.clipboard.writeText(templateURL)
         }}
       >
         {isShowing ? (

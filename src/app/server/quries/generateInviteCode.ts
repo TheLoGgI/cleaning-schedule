@@ -9,7 +9,7 @@ export const generateInviteCode = async (scheduleId: string) => {
   const supabase = createServerComponentClient(
     { cookies },
     {
-      // supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
       options: {
         global: {
           headers: {
@@ -21,12 +21,9 @@ export const generateInviteCode = async (scheduleId: string) => {
     }
   )
 
-  const inviteKey = await supabase.from("InviteKey").upsert(
-    { scheduleId, key: generatedCode }
-    // {
-    //   onConflict: "scheduleId",
-    // }
-  )
+  const inviteKey = await supabase
+    .from("InviteKey")
+    .insert({ scheduleId, key: generatedCode })
 
   console.info(generatedCode, inviteKey)
 
