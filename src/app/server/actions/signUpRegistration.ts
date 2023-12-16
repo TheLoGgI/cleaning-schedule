@@ -50,9 +50,11 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
       .single()
 
     const expireTime = new Date(doesInviteCodeExists.data.created_at)
+    console.info("expireTime: ", expireTime)
     expireTime.setDate(expireTime.getDate() + 1)
+    console.info("added day expireTime: ", expireTime)
 
-    const codeHasExpired = expireTime > new Date()
+    const codeHasExpired = expireTime < new Date()
     if (codeHasExpired) {
       return { error: "Sorry, your invitation as expired" }
     }

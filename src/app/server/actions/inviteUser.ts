@@ -1,18 +1,7 @@
 "use server"
 
-import { revalidatePath, revalidateTag } from "next/cache"
-
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-
-// type UpdateRoomActionProps = FormDataEntryValue
-
-// type UpdateRoomSelect = {
-//   data: {
-//     userID: string
-//     User: { firstName: string; lastName: string }
-//   }
-// }
 
 export async function inviteUser(formData: FormData) {
   const userId = String(formData.get("userId"))

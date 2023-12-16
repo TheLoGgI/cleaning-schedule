@@ -6,6 +6,7 @@ import {
 
 import Link from "next/link"
 import ModalCreateDashboard from "./ModalCreateDashboard"
+import { Role } from "@/app/components/EnumRole"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
@@ -39,7 +40,7 @@ export default async function Dashboard() {
 
   const currentUser = (await supabase
     .from("User")
-    .select(`*, schedules: Room( ...Schedule(*))`)
+    .select(`*, schedules: Room( ...Schedule(*, role: ScheduleRole(role)))`)
     .eq("authId", authUser.data.user?.id as string)
     .single()) as unknown as PostgrestSingleResponse<UserWithSchedules>
 
@@ -87,16 +88,17 @@ export default async function Dashboard() {
       {Array.isArray(availableSchedules) && availableSchedules?.length !== 0 ? (
         <div className="px-4 text-lg">
           <div className="flex justify-between border-b-2 border-gray-200">
-            <div className="lg:grid lg:grid-cols-4  mb-4 px-4 flex-grow">
-              <p className="font-semibold">Schedule Name</p>
+            <div className="lg:grid gap-10 lg:grid-cols-4 p-4 pr-0 flex-grow">
+              <p className="font-semibold col-span-2">Schedule Name</p>
               <p className="font-semibold hidden lg:block">Starting Week</p>
               <p className="font-semibold hidden lg:block">isActive</p>
             </div>
             {/* For matching the columns with the header columns */}
-            <div className="invisible pr-4">delete</div>
+            <div className="invisible px-4">delete</div>
           </div>
           <ModalDeleteScheduleContextProvider>
             {availableSchedules.map((schedule) => {
+              const roleInSchedule = schedule?.role?.[0]?.role ?? Role.User
               return (
                 <div
                   key={schedule.name + schedule.id}
@@ -106,25 +108,22 @@ export default async function Dashboard() {
                     href={`/schedule/${schedule.id}`}
                     className="lg:grid gap-10 lg:grid-cols-4 p-4 pr-0 flex-grow"
                   >
-                    <p>{schedule.name}</p>
+                    <p className="col-span-2 capitalize">{schedule.name}</p>
                     <p className="hidden lg:block">{schedule.startingWeek}</p>
                     <p className="hidden lg:block">
                       {String(schedule.isActive)}
                     </p>
-                    {/* <input
-                      readOnly
-                      type="checkbox"
-                      checked={schedule.isActive}
-                      name="isActive"
-                      className="text-blue-500 accent-current w-6"
-                    /> */}
                   </Link>
-                  <div className="p-4">
-                    <ModalDeleteScheduleButton
-                      schedule={schedule as DashboardSchedule}
-                      authId={authUser.data.user?.id as AuthUser["id"]}
-                    />
-                  </div>
+                  {roleInSchedule === Role.Admin ? (
+                    <div className="p-4">
+                      <ModalDeleteScheduleButton
+                        schedule={schedule as DashboardSchedule}
+                        authId={authUser.data.user?.id as AuthUser["id"]}
+                      />
+                    </div>
+                  ) : (
+                    <div className="invisible px-4">delete</div>
+                  )}
                 </div>
               )
             })}

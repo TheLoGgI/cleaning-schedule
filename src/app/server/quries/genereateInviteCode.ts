@@ -21,15 +21,14 @@ export const generateInviteCode = async (scheduleId: string) => {
     }
   )
 
-  const inviteKey = await supabase
-    .from("InviteKey")
-    .upsert(
-      { scheduleId, key: generatedCode }
-      // {
-      //   onConflict: "scheduleId",
-      // }
-    )
-    .explain()
+  const inviteKey = await supabase.from("InviteKey").upsert(
+    { scheduleId, key: generatedCode }
+    // {
+    //   onConflict: "scheduleId",
+    // }
+  )
+
+  console.info(generatedCode, inviteKey)
 
   if (inviteKey.error) {
     const existingInviteKey = await supabase
