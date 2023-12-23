@@ -30,16 +30,21 @@ export default async function Page({
     .eq("id", params.id)
     .single()
 
-  if (auth.data.user === null && schedule.isActive === false) {
+  if (
+    auth.data.user === null &&
+    (schedule === null || schedule.isActive === false)
+  ) {
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
-        <h1 className="text-2xl text-center mt-40 font-semibold">
-          No Schedule with this id
-        </h1>
-        <p>Login to create your own schedule</p>
+        <div>
+          <h1 className="text-2xl text-center mt-40 font-semibold">
+            No Schedule
+          </h1>
+          <p>Login to create your own schedule</p>
+        </div>
         <Link
           href="/login"
-          className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Login
         </Link>
@@ -53,9 +58,9 @@ export default async function Page({
       <section className="container max-w-screen-lg mx-auto py-4 px-8">
         <h1 className="text-2xl font-semibold">
           <span className="font-normal text-base border p-2 mx-2 rounded">
-            {schedule.isActive ? "Active" : "Inactive"}
+            {schedule?.isActive ? "Active" : "Inactive"}
           </span>
-          {schedule.name}
+          {schedule?.name}
         </h1>
         <ScheduleTable scheduleId={params.id} />
       </section>
@@ -96,7 +101,7 @@ export default async function Page({
     <section className="container max-w-screen-lg mx-auto py-4 px-4">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold inline-block mr-4">
-          {schedule.name}
+          {schedule?.name}
           <span className="font-normal text-base ml-2 p-2 bg-gray-200 rounded print:hidden">
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
