@@ -11,6 +11,7 @@ type props = {
 
 export const InviteMembersButton = ({ scheduleId }: props) => {
   const [isShowing, setIsShowing] = useState(false)
+  const [inviteCode, setInviteCode] = useState("")
 
   useEffect(() => {
     setTimeout(() => {
@@ -27,6 +28,7 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
           setIsShowing(true)
           const inviteCode = await generateInviteCode(scheduleId)
           if (inviteCode === null) return
+          setInviteCode(inviteCode)
           const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${inviteCode}`
           navigator.clipboard.writeText(templateURL)
         }}
@@ -39,6 +41,9 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
           </span>
         )}
       </button>
+      {/* <div before="Hello World" class="before:content-[attr(before)]">
+        {inviteCode}
+      </div> */}
     </>
   )
 }

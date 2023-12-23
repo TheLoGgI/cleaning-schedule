@@ -24,16 +24,13 @@ export default async function Page({
   const supabase = createServerComponentClient<any>({ cookies })
   const auth = await supabase.auth.getUser()
 
-  const { data: schedule } = await supabase
+  const { data: schedule, error } = await supabase
     .from("Schedule")
     .select("*")
     .eq("id", params.id)
     .single()
 
-  if (
-    auth.data.user === null &&
-    (schedule === null || schedule.isActive === false)
-  ) {
+  if (auth.data.user === null) {
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
         <div>
@@ -52,13 +49,32 @@ export default async function Page({
     )
   }
 
+  if (schedule === null && error !== null) {
+    return (
+      <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
+        <div>
+          <h1 className="text-2xl text-center mt-40 font-semibold">
+            No Schedule
+          </h1>
+          <p>Create your own schedule</p>
+        </div>
+        <Link
+          href="/schedule/create"
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Create Schedule
+        </Link>
+      </section>
+    )
+  }
+
   if (auth.data.user === null) {
     // User not allowed
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8">
         <h1 className="text-2xl font-semibold">
           <span className="font-normal text-base border p-2 mx-2 rounded">
-            {schedule?.isActive ? "Active" : "Inactive"}
+            {schedule.isActive ? "Active" : "Inactive"}
           </span>
           {schedule?.name}
         </h1>

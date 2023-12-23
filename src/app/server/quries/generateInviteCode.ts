@@ -3,7 +3,9 @@
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
-export const generateInviteCode = async (scheduleId: string) => {
+export const generateInviteCode = async (
+  scheduleId: string
+): Promise<string | null> => {
   const generatedCode = Math.random().toString(36).substring(2, 15)
 
   const supabase = createServerComponentClient(

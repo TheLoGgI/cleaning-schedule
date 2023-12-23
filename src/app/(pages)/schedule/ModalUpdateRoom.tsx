@@ -162,7 +162,7 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
                   id="firstName"
                   name="firstName"
-                  defaultValue={room?.User.firstName}
+                  defaultValue={room?.User?.firstName}
                   required
                 />
               </div>

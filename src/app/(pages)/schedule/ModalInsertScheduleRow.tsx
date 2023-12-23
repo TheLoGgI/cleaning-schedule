@@ -30,7 +30,9 @@ export default function ModalInsertScheduleRow({
     },
     ...rooms.map((room) => ({
       id: room.id,
-      name: `${room.User.firstName} ${room.User.lastName}`,
+      name: room.User
+        ? `${room.User.firstName} ${room.User.lastName}`
+        : "No name",
       activeInSchedule: room.activeInSchedule,
       value: room.id,
     })),
