@@ -60,7 +60,7 @@ export interface Database {
           id: string
           roomNr: number
           scheduleID: string
-          userId: string
+          userId: string | null
         }
         Insert: {
           activeInSchedule?: boolean
@@ -68,7 +68,7 @@ export interface Database {
           id?: string
           roomNr: number
           scheduleID: string
-          userId: string
+          userId?: string | null
         }
         Update: {
           activeInSchedule?: boolean
@@ -76,7 +76,7 @@ export interface Database {
           id?: string
           roomNr?: number
           scheduleID?: string
-          userId?: string
+          userId?: string | null
         }
         Relationships: [
           {
@@ -217,7 +217,7 @@ export interface Database {
           authId?: string | null
           email?: string | null
           firstName: string
-          id: string
+          id?: string
           lastName?: string | null
           premium?: boolean
         }

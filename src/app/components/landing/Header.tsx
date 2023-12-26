@@ -9,6 +9,7 @@ import LogoutButton from "../LogoutButton"
 import { twMerge } from "tailwind-merge"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { useUser } from "@/app/hooks/useUser"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
@@ -17,10 +18,11 @@ const navigation = [
   //   { name: "Company", href: "#" },
 ]
 
-export default function Header({ user }: { user: any }) {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathName = usePathname()
   const isLandingPage = pathName === "/"
+  const user = useUser()
 
   return (
     <header

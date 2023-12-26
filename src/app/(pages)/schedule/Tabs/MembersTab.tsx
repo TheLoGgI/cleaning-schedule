@@ -1,9 +1,12 @@
 import {
+  InviteLink,
+  InviteMembersButton,
+} from "@/app/components/InviteMembersButton"
+import {
   InviteModalButton,
   ModalInviteUserContextProvider,
 } from "../ModalInviteUser"
 
-import { InviteMembersButton } from "@/app/components/InviteMembersButton"
 import { TabPanel } from "@/app/components/Tab"
 
 const MembersTab = ({
@@ -15,9 +18,12 @@ const MembersTab = ({
 }) => {
   return (
     <TabPanel>
-      <div className="flex justify-between items-center my-10">
-        <InviteMembersButton scheduleId={scheduleId} />
-        <p>{users.length} Members</p>
+      <div className="my-10">
+        <div className="flex justify-between items-center">
+          <InviteMembersButton scheduleId={scheduleId} />
+          <p>{users.length} Members</p>
+        </div>
+        <InviteLink />
       </div>
 
       {users.length > 0 && (

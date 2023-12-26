@@ -86,7 +86,7 @@ export async function signUpRegistration(prevState: any, formData: FormData) {
       data: {
         firstName,
         lastName,
-        role: "User",
+        // role: "User",
       },
     },
   })

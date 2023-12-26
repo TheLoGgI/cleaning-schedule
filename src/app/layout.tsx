@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Header from "./components/landing/Header"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
+import { UserContextProvider } from "./hooks/useUser"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
@@ -22,10 +23,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Right now the Header it self can't handle this request because on build the error:
-  // "Dynamic server usage: Page couldn't be rendered statically because it used `cookies`"
-  // prevents the build from completing.
-
   const supabase = createServerComponentClient({ cookies })
   const auth = await supabase.auth.getUser()
   const user = auth.data.user
@@ -64,8 +61,12 @@ export default async function RootLayout({
       </head>
 
       <body className={inter.className}>
-        <Header user={user} />
-        <main className="min-h-screen bg-background mt-10">{children}</main>
+        <UserContextProvider user={user}>
+          <>
+            <Header />
+            <main className="min-h-screen bg-background mt-10">{children}</main>
+          </>
+        </UserContextProvider>
         <Analytics />
       </body>
     </html>
