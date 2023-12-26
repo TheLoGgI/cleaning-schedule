@@ -1,5 +1,5 @@
 {
-  "regions": ["arn1", "lhr1"],
+  "regions": "arn1",
   "crons": [
     {
       "path": "/api/cron?cron_api_secret=D1pkAYpS5HRNyUKGQSMC1epxYsd44U",
