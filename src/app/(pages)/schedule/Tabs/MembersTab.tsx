@@ -50,12 +50,12 @@ const MembersTab = ({
                       key={index}
                       className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
                     >
-                      <td className="px-2 lg:px-6 py-4">
+                      <td className="px-2 lg:px-6 py-4 text-black">
                         {user === null
                           ? "Empty"
                           : `${user.firstName} ${user.lastName}`}
                       </td>
-                      <td className="px-2 lg:px-6 py-4 truncate max-w-[150px]">
+                      <td className="px-2 lg:px-6 py-4 truncate max-w-[150px] text-black">
                         {user?.email ?? "No Email"}
                       </td>
                       <td className="px-2 lg:px-6 py-4">
