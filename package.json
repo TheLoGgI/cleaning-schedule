@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types": "supabase gen types typescript --project-id jcdoxwlbxpofoussndlc > src/app/types/supabase.ts",
-    "email": "email dev --dir src/app/components/emails"
+    "supabase:types": "supabase gen types typescript --project-id jcdoxwlbxpofoussndlc > src/app/types/supabase.ts",
+    "supabase:migration": "supabase migration new",
+    "email": "email dev --dir src/app/components/emails",
+    "supa": "supabase"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",

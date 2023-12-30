@@ -1,7 +1,11 @@
 "use server"
 
+import {
+  SupabaseClient,
+  createServerComponentClient,
+} from "@supabase/auth-helpers-nextjs"
+
 import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { revalidatePath } from "next/cache"
 
 type ScheduleRow = {
@@ -34,19 +38,13 @@ function shuffleRooms(rooms: Room[]): Room[] {
   return rooms
 }
 
-export async function generateSchedule(formData: FormData) {
-  const scheduleId = String(formData.get("scheduleId"))
-  const startingWeek = Number(formData.get("startingWeek"))
-
-  const supabase = createServerComponentClient<any>({ cookies })
-
-  // await sb.from('Schedule').select(`startingWeek`).eq('id', scheduleId).single()
-
+const resetSchedule = async (supabase: SupabaseClient, scheduleId: string) => {
   // Count rows in ScheduleRow for scheduleId
   const scheduleRows = await supabase
     .from("ScheduleRow")
     .select("*", { count: "exact", head: true })
     .eq("scheduleId", scheduleId)
+    .eq("show", true)
 
   if (scheduleRows.error) {
     throw new Error("Schedule Count went wrong: " + scheduleRows.error.message)
@@ -56,15 +54,24 @@ export async function generateSchedule(formData: FormData) {
     throw new Error("Schedule Count could not be found")
   }
 
+  // Reset all previous schedule rows // Delete all rows with scheduleId
   if ((scheduleRows.count || 0) > 0) {
     const deletedScheduleRows = await supabase
       .from("ScheduleRow")
       .delete()
       .eq("scheduleId", scheduleId)
   }
+}
 
-  // TODO: add functions to client also
+export async function generateSchedule(formData: FormData) {
+  const scheduleId = String(formData.get("scheduleId"))
+  const startingWeek = Number(formData.get("startingWeek"))
 
+  const supabase = createServerComponentClient<any>({ cookies })
+
+  await resetSchedule(supabase, scheduleId)
+
+  // Find all rooms from schedule dashboard
   const rooms = await supabase
     .from("Room")
     .select(
@@ -80,6 +87,7 @@ export async function generateSchedule(formData: FormData) {
 
   const shuffledRooms = shuffleRooms((rooms.data as unknown as Room[]) || [])
 
+  // Create new schedule rows and insert them into the database
   const newScheduleRows: Omit<ScheduleRow, "id">[] = []
   let weekNr = startingWeek
   for (let index = 0; index < shuffledRooms.length; index += 2, weekNr++) {
