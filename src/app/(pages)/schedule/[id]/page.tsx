@@ -66,6 +66,7 @@ export default async function Page({
 
   if (auth.data.user === null) {
     // User not allowed
+    // TODO: add anonymisering of users in schedule (only numbers or firstNames)
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8">
         <h1 className="text-2xl font-semibold">{schedule?.name}</h1>

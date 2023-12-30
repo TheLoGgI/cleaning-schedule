@@ -71,5 +71,12 @@ export async function GET(request: Request) {
     )
   }
 
+  await resend.emails.send({
+    from: "ME <business@lasseaakjaer.com>",
+    to: "lasse_aakjaer@hotmail.com",
+    subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
+    text: JSON.stringify(emailRecipients) + "was sent email of schedule week",
+  })
+
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 }
