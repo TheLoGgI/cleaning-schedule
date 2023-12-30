@@ -11,10 +11,6 @@ import { TabPanels } from "@/app/components/Tab"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
-// import ModalUpdateSchedule from '@/app/schedule/ModalUpdateSchedule'
-
-// export const dynamic = 'force-dynamic'
-
 export default async function Page({
   params,
 }: {
@@ -29,25 +25,6 @@ export default async function Page({
     .select("*")
     .eq("id", params.id)
     .single()
-
-  if (auth.data.user === null) {
-    return (
-      <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
-        <div>
-          <h1 className="text-2xl text-center mt-40 font-semibold">
-            No Schedule
-          </h1>
-          <p>Login to create your own schedule</p>
-        </div>
-        <Link
-          href="/login"
-          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Login
-        </Link>
-      </section>
-    )
-  }
 
   if (schedule === null && error !== null) {
     return (
@@ -68,16 +45,30 @@ export default async function Page({
     )
   }
 
+  if (schedule.isActive === false && auth.data.user === null) {
+    return (
+      <section className="container max-w-screen-lg mx-auto py-4 px-8 flex flex-col items-center gap-4">
+        <div>
+          <h1 className="text-2xl text-center mt-40 font-semibold">
+            No Schedule
+          </h1>
+          <p>Login to create your own schedule</p>
+        </div>
+        <Link
+          href="/login"
+          className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Login
+        </Link>
+      </section>
+    )
+  }
+
   if (auth.data.user === null) {
     // User not allowed
     return (
       <section className="container max-w-screen-lg mx-auto py-4 px-8">
-        <h1 className="text-2xl font-semibold">
-          <span className="font-normal text-base border p-2 mx-2 rounded">
-            {schedule.isActive ? "Active" : "Inactive"}
-          </span>
-          {schedule?.name}
-        </h1>
+        <h1 className="text-2xl font-semibold">{schedule?.name}</h1>
         <ScheduleTable scheduleId={params.id} />
       </section>
     )

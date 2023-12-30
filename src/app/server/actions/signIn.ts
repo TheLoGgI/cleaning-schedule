@@ -22,8 +22,5 @@ export async function signIn(prevState: any, formData: FormData) {
     return { error: "Could not authenticate user" }
   }
 
-  console.log("data: ", data)
-
-  //   return { message: "Successfully authenticated" }
   redirect("/dashboard")
 }

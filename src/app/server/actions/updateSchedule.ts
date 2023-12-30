@@ -10,7 +10,7 @@ export async function updateSchedule(formData: FormData) {
   const authId = String(formData.get("authId"))
 
   const scheduleName = String(formData.get("scheduleName"))
-  const inCleaningSchedule = Number(formData.get("inCleaningSchedule"))
+  const inCleaningSchedule = formData.get("inCleaningSchedule")
   const startingWeek = Number(formData.get("startingWeek"))
 
   const supabase = createServerComponentClient({ cookies })
