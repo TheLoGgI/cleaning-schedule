@@ -8,7 +8,7 @@ const deleteRoomUser = {
   roomNr: 0,
   User: {
     id: "empty",
-    firstName: "Deleted",
+    firstName: "Missing",
     lastName: "Room",
     email: "",
   },

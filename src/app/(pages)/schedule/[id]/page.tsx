@@ -113,6 +113,8 @@ export default async function Page({
   const isAdminOrModerator =
     userRole === Role.Admin || userRole === Role.Moderator
 
+  // const maxWeek = Math.max(...schedule.))
+
   return (
     <section className="container max-w-screen-lg mx-auto py-4 px-4">
       <header className="mb-8">

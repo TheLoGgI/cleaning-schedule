@@ -1,109 +1,90 @@
 "use server"
 
+import { ScheduleRow } from "./generateSchedule"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { revalidatePath } from "next/cache"
+import { shuffleRooms } from "@/app/helpers/shuffleRooms"
 
-type ScheduleRow = {
-  id: number
-  room: string | null
-  scheduleId: string
-  weekNr: number
-}
-
-function shuffleRooms(rooms: Room[]): Room[] {
-  let currentIndex = rooms.length,
-    temporaryValue,
-    randomIndex,
-    counter = 0
-  const schedule: Schedule[] = []
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    counter++
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex -= 1
-
-    // And swap it with the current element.
-    temporaryValue = rooms[currentIndex]
-    rooms[currentIndex] = rooms[randomIndex]
-    rooms[randomIndex] = temporaryValue
-  }
-
-  return rooms
-}
-
-export async function generateNextWeekSchedule(formData: FormData) {
+export async function generateNextWeekSchedule(
+  prevState: any,
+  formData: FormData
+) {
   const scheduleId = String(formData.get("scheduleId"))
   console.log("scheduleId: ", scheduleId)
-  // const startingWeek = Number(formData.get("startingWeek"))
 
   const supabase = createServerComponentClient<any>({ cookies })
 
-  const scheduleRows = await supabase
+  const weeksNumbersForSchedule = await supabase
     .from("ScheduleRow")
-    .select("max(weekNr)")
+    .select("weekNr")
     .eq("scheduleId", scheduleId)
-  // .order("weekNr", { ascending: false })
-  // .single()
 
-  console.log("scheduleRows: ", scheduleRows)
+  const maxWeek =
+    weeksNumbersForSchedule.data &&
+    Math.max(...weeksNumbersForSchedule.data.map((week) => week.weekNr)) + 1 // currentWeek + 1 for the next Week
+  console.log("maxWeek: ", maxWeek)
 
-  // const rooms = await supabase
-  //   .from("Room")
-  //   .select(
-  //     `
-  //         id,
-  //         activeInSchedule,
-  //         roomNr,
-  //         User(id, firstName, lastName, email)
-  //         `
-  //   )
-  //   .match({ scheduleID: scheduleId, activeInSchedule: true })
-  //   .order("roomNr")
+  if (maxWeek == null) {
+    throw new Error(
+      "Ops, there was a problem can't generate schedules right now, try again later"
+    )
+  }
 
-  // const shuffledRooms = shuffleRooms((rooms.data as unknown as Room[]) || [])
+  const rooms = await supabase
+    .from("Room")
+    .select(
+      `
+          id,
+          activeInSchedule,
+          roomNr,
+          User(id, firstName, lastName, email)
+          `
+    )
+    .match({ scheduleID: scheduleId, activeInSchedule: true })
+    .order("roomNr")
 
-  // const newScheduleRows: Omit<ScheduleRow, "id">[] = []
-  // let weekNr = startingWeek
-  // for (let index = 0; index < shuffledRooms.length; index += 2, weekNr++) {
-  //   const first = shuffledRooms[index]
-  //   const second = shuffledRooms[index + 1]
+  const shuffledRooms = shuffleRooms((rooms.data as unknown as Room[]) || [])
 
-  //   if (first === undefined || second === undefined) {
-  //     newScheduleRows.push(
-  //       {
-  //         scheduleId,
-  //         weekNr: weekNr,
-  //         room: first?.id ?? null,
-  //       },
-  //       {
-  //         scheduleId,
-  //         weekNr: weekNr,
-  //         room: second?.id ?? null,
-  //       }
-  //     )
+  const newScheduleRows: Omit<ScheduleRow, "id">[] = []
+  let weekNr = maxWeek
+  for (let index = 0; index < shuffledRooms.length; index += 2, weekNr++) {
+    const first = shuffledRooms[index]
+    const second = shuffledRooms[index + 1]
 
-  //     // Skip the rest of the loop and continue with the next iteration
-  //     continue
-  //   }
+    if (first === undefined || second === undefined) {
+      newScheduleRows.push(
+        {
+          scheduleId,
+          weekNr: weekNr,
+          room: first?.id ?? null,
+        },
+        {
+          scheduleId,
+          weekNr: weekNr,
+          room: second?.id ?? null,
+        }
+      )
 
-  //   newScheduleRows.push(
-  //     {
-  //       scheduleId,
-  //       weekNr: weekNr,
-  //       room: first.id,
-  //     },
-  //     {
-  //       scheduleId,
-  //       weekNr: weekNr,
-  //       room: second.id,
-  //     }
-  //   )
-  // }
+      // Skip the rest of the loop and continue with the next iteration
+      continue
+    }
 
-  // await supabase.from("ScheduleRow").insert(newScheduleRows)
+    newScheduleRows.push(
+      {
+        scheduleId,
+        weekNr: weekNr,
+        room: first.id,
+      },
+      {
+        scheduleId,
+        weekNr: weekNr,
+        room: second.id,
+      }
+    )
+  }
 
-  // revalidatePath("/schedule/[id]#Schedule", "page")
+  await supabase.from("ScheduleRow").insert(newScheduleRows)
+
+  revalidatePath("/schedule/[id]#Schedule", "page")
 }

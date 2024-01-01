@@ -7,35 +7,13 @@ import {
 
 import { cookies } from "next/headers"
 import { revalidatePath } from "next/cache"
+import { shuffleRooms } from "@/app/helpers/shuffleRooms"
 
-type ScheduleRow = {
+export type ScheduleRow = {
   id: number
   room: string | null
   scheduleId: string
   weekNr: number
-}
-
-function shuffleRooms(rooms: Room[]): Room[] {
-  let currentIndex = rooms.length,
-    temporaryValue,
-    randomIndex,
-    counter = 0
-  const schedule: Schedule[] = []
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    counter++
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex -= 1
-
-    // And swap it with the current element.
-    temporaryValue = rooms[currentIndex]
-    rooms[currentIndex] = rooms[randomIndex]
-    rooms[randomIndex] = temporaryValue
-  }
-
-  return rooms
 }
 
 const resetSchedule = async (supabase: SupabaseClient, scheduleId: string) => {
@@ -63,7 +41,7 @@ const resetSchedule = async (supabase: SupabaseClient, scheduleId: string) => {
   }
 }
 
-export async function generateSchedule(formData: FormData) {
+export async function generateSchedule(prevState: any, formData: FormData) {
   const scheduleId = String(formData.get("scheduleId"))
   const startingWeek = Number(formData.get("startingWeek"))
 
