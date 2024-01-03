@@ -59,7 +59,6 @@ export const getSchedule = async (
         const existingRowForWeek = scheduleCollection.weeks.get(row.weekNr)
         if (!existingRowForWeek) return scheduleCollection
 
-        // TODO: Replace RoomId with Id of row
         existingRowForWeek.rooms.push({
           row: row.id,
           activeInSchedule,
