@@ -7,7 +7,7 @@ import { Tab } from "@headlessui/react"
 import { UserRoleProvider } from "@/app/hooks/useUserRole"
 import { twMerge } from "tailwind-merge"
 
-type TabType = "Members" | "Rooms" | "Schedule"
+type TabType = "Members" | "Rooms" | "Schedule" /*  | "Economy" */
 type Props = {
   userRole: Role
   children: React.ReactNode
@@ -23,7 +23,7 @@ const TabNav = ({ children, userRole }: Props) => {
   const TabsList = useMemo(
     () =>
       isAdminOrModerator
-        ? ["Members", "Rooms", "Schedule"]
+        ? ["Members", "Rooms", "Schedule" /* , "Economy" */]
         : ["Rooms", "Schedule"],
     [isAdminOrModerator]
   )

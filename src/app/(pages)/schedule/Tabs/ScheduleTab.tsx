@@ -193,19 +193,3 @@ const ScheduleTab = ({
 }
 
 export default ScheduleTab
-
-// <PendingButton
-//                               type="submit"
-//                               disabled={rooms.length === 0}
-//                               title={
-//                                 rooms.length === 0 &&
-//                                 "You need at least one room to generate a schedule"
-//                               }
-//                               className="border-2 border-blue-700 hover:bg-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:border-none disabled:bg-gray-400 disabled:cursor-not-allowed"
-//                             >
-//                               Generate Schedule
-//                             </PendingButton>
-
-{
-  /*  */
-}
