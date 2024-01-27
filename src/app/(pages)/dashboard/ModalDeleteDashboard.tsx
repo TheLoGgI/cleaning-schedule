@@ -82,6 +82,7 @@ const initialState = {
 
 export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
   function ModalDeleteSchedule({ schedule, authId }, ref) {
+      // @ts-ignore - TODO: fix type formstate
     const [state, formAction] = useFormState(deleteScheduleAction, initialState)
 
     return (
@@ -124,6 +125,7 @@ export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
             <form
               className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"
               action={async (formData) => {
+                  // @ts-ignore - TODO: fix type formstate
                 formAction(formData)
                 setTimeout(() => {
                   // @ts-ignore

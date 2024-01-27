@@ -7,12 +7,17 @@ import { redirect } from "next/navigation"
 import { signIn } from "@/app/server/actions/signIn"
 import { useFormState } from "react-dom"
 
+type SignInState = {status: string, message?: string, error?: string} 
+
 const initialState = {
-  status: "idle",
+  status: 'idle',
+  message: undefined,
+  error: undefined
 }
 
 export default function Login() {
-  const [state, formAction] = useFormState(signIn, initialState)
+  // @ts-ignore - formState is missing props
+  const [state, formAction] = useFormState<SignInState>(signIn, initialState)
 
   // If user is logged in redirect to home page
   if (state.status === "success") {

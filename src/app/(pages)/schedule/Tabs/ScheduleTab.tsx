@@ -36,10 +36,12 @@ const ScheduleTab = ({
   children: React.ReactNode
 }) => {
   const userRole = useUserRole()
+    // @ts-ignore - TODO: fix type formstate
   const [, generateScheduleFormAction] = useFormState(
     generateSchedule,
     initialState
   )
+    // @ts-ignore - TODO: fix type formstate
   const [, nextWeekScheduleFormAction] = useFormState(
     generateNextWeekSchedule,
     initialState

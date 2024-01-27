@@ -4,12 +4,12 @@ import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { redirect } from "next/navigation"
 
-export async function signIn(prevState: any, formData: FormData) {
+export async function signIn(prevState: any, formData: FormData, permalink: string) {
   const email = String(formData.get("email"))
   const password = String(formData.get("password"))
 
-  if (!email) return { message: "Please enter email" }
-  if (!password) return { message: "Please enter password" }
+  if (!email) return { message: "Please enter email", status: "missingEmail" }
+  if (!password) return { message: "Please enter password", status: "missingPassword" }
 
   const supabase = createRouteHandlerClient({ cookies })
 
@@ -19,8 +19,9 @@ export async function signIn(prevState: any, formData: FormData) {
   })
 
   if (error) {
-    return { error: "Could not authenticate user" }
+    return { error: "Could not authenticate user", status: "error" }
   }
 
-  redirect("/dashboard")
+  return { status: "success"}
+  // redirect("/dashboard")
 }

@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    instrumentationHook: true
+  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

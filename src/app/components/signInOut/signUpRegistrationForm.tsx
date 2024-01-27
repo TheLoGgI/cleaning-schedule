@@ -8,7 +8,9 @@ import { useFormState } from "react-dom"
 import { useSearchParams } from "next/navigation"
 
 const initialState = {
-  message: null,
+  message: undefined,
+  body: undefined,
+  error: ""
 }
 
 export default function SignUpRegistrationForm() {
@@ -134,7 +136,7 @@ export default function SignUpRegistrationForm() {
               </div>
             </div>
 
-            <Messages state={state} />
+            {/* <Messages state={state} /> */}
 
             <div>
               <PendingButton

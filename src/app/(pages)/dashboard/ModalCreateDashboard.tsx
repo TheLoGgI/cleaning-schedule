@@ -8,8 +8,6 @@ import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { createSchedule } from "@/app/server/actions/createSchedule"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 
-// import { experimental_useFormStatus as useFormStatus } from "react-dom"
-
 type Props = {
   // title: string
   user: AuthUser
@@ -18,7 +16,8 @@ type Props = {
 }
 
 const initialState = {
-  status: "idle",
+  status: undefined,
+  body: undefined,
 }
 
 export default function ModalCreateDashboard({
@@ -33,6 +32,7 @@ export default function ModalCreateDashboard({
   const currentWeekNumber = getWeekNumber(today)
 
   const [startingWeek, setStartingWeek] = useState<number>(currentWeekNumber)
+  // @ts-ignore - TODO: fix type formstate
   const [state, formAction] = useFormState(createSchedule, initialState)
 
   return (
@@ -85,6 +85,7 @@ export default function ModalCreateDashboard({
               ref={formRef}
               className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"
               action={async (formData) => {
+                // @ts-ignore - TODO FIX: ts not know to parse formdata
                 formAction(formData)
 
                 setTimeout(() => {
