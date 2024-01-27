@@ -173,18 +173,21 @@ export interface Database {
           id: number
           room: string | null
           scheduleId: string
+          show: boolean | null
           weekNr: number
         }
         Insert: {
           id?: number
           room?: string | null
           scheduleId: string
+          show?: boolean | null
           weekNr?: number
         }
         Update: {
           id?: number
           room?: string | null
           scheduleId?: string
+          show?: boolean | null
           weekNr?: number
         }
         Relationships: [

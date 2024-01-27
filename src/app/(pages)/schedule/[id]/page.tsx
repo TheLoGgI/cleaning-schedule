@@ -1,4 +1,5 @@
 import { AuthUser } from "@supabase/supabase-js"
+import EconomyTab from "../Tabs/EconomyTab"
 import Link from "next/link"
 import MembersTab from "../Tabs/MembersTab"
 import ModalUpdateSchedule from "../ModalUpdateSchedule"
@@ -86,7 +87,9 @@ export default async function Page({
 
   const userRole = scheduleRole.data ? scheduleRole.data?.role : Role.User
 
-  const isUserAdmin = userRole === Role.Admin
+  const isAdmin = userRole === Role.Admin
+  const isAdminOrModerator =
+    userRole === Role.Admin || userRole === Role.Moderator
 
   const rooms = await supabase
     .from("Room")
@@ -102,19 +105,16 @@ export default async function Page({
   const users = (rooms.data?.map((room) => room.User) ||
     []) as unknown as User[]
 
-  const isAdminOrModerator =
-    userRole === Role.Admin || userRole === Role.Moderator
-
   return (
     <section className="container max-w-screen-lg mx-auto py-4 px-4">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold inline-block mr-4">
+        <h1 className="text-2xl font-semibold inline-block mr-4 capitalize">
           {schedule?.name}
           <span className="font-normal text-base ml-2 p-2 bg-gray-200 rounded print:hidden">
             {schedule.isActive ? "Active" : "Inactive"}
           </span>
         </h1>
-        {isUserAdmin && (
+        {isAdmin && (
           <ModalUpdateSchedule
             schedule={schedule}
             user={auth.data.user as AuthUser}
@@ -142,6 +142,7 @@ export default async function Page({
           >
             <ScheduleTable scheduleId={params.id} />
           </ScheduleTab>
+          {/* {isAdmin && <EconomyTab scheduleId={params.id} users={users} />} */}
         </TabPanels>
       </TabNav>
     </section>
