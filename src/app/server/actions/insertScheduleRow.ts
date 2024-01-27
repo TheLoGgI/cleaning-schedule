@@ -4,6 +4,7 @@ import { Role } from "@/app/components/EnumRole"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { revalidatePath } from "next/cache"
+import { Tables } from "@/app/helpers/tables"
 
 // import { useRouter } from 'next/router'
 
@@ -36,7 +37,7 @@ export async function insertScheduleRow(formData: FormData) {
     }
 
     const insertedScheduleRow = await supabase
-      .from("ScheduleRow")
+      .from(Tables.ScheduleRow)
       .insert([
         {
           weekNr,

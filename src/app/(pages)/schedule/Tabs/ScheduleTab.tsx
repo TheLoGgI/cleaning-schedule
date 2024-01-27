@@ -19,6 +19,7 @@ import { TabPanel } from "@/app/components/Tab"
 import { generateNextWeekSchedule } from "@/app/server/actions/generateNextWeeksSchedule"
 import { generateSchedule } from "../../../server/actions/generateSchedule"
 import { useUserRole } from "@/app/hooks/useUserRole"
+import { ToggleEditModeButton } from "@/app/components/ToggleEditMode"
 
 const initialState = {
   // status: "idle",
@@ -56,6 +57,7 @@ const ScheduleTab = ({
       <div className="flex justify-between items-center print:hidden">
         {isAdminOrModerator && (
           <div className="flex gap-4 my-10">
+            <ToggleEditModeButton />
             <ModalInsertScheduleRow
               weekNr={startingWeek}
               rooms={rooms}

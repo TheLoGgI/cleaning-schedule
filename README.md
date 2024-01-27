@@ -30,6 +30,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 - Set Env variables, look at .env.local file for need props.
 - Run `Supabase start` to install supabase database in docker
 - Run `supabase db reset` to reset local database with the migration file and seed.sql.
+- Go to `http://localhost:54323/` for supabase studio
 
 
 ### To Stop running Docker Supabase

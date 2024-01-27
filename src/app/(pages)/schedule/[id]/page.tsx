@@ -1,5 +1,4 @@
 import { AuthUser } from "@supabase/supabase-js"
-import EconomyTab from "../Tabs/EconomyTab"
 import Link from "next/link"
 import MembersTab from "../Tabs/MembersTab"
 import ModalUpdateSchedule from "../ModalUpdateSchedule"

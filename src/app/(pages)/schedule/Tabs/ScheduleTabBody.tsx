@@ -5,6 +5,7 @@ import { swapScheduleRoomsRow } from "@/app/server/actions/swapScheduleRoomsRow"
 import { twMerge } from "tailwind-merge"
 import { useState } from "react"
 import { useUserRole } from "@/app/hooks/useUserRole"
+import { useStore } from "@/app/hooks/useStore"
 
 const RoomCellAdmin = ({
   room,
@@ -130,11 +131,14 @@ const RoomCell = ({ room }: { room: Room }) => {
 
 export const DisplayTableBody = ({ schedule }: { schedule: Schedule }) => {
   const userRole = useUserRole()
+  const { editMode } = useStore()
 
   const isUserAdminOrModerator =
     userRole === Role.Admin || userRole === Role.Moderator
 
-  return isUserAdminOrModerator ? (
+  
+
+  return isUserAdminOrModerator && editMode === true ? (
     <ScheduleTabBodyAdmin schedule={schedule} />
   ) : (
     <ScheduleTabBody schedule={schedule} />
