@@ -7,7 +7,7 @@ import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY ?? undefined)
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
