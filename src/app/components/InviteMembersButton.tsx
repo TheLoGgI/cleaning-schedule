@@ -6,7 +6,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { EnvelopeIcon } from "@heroicons/react/24/outline"
 import { Transition } from "@headlessui/react"
 import { generateInviteCode } from "../server/quries/generateInviteCode"
-import { twMerge } from "tailwind-merge"
 
 type props = {
   scheduleId: string
@@ -14,7 +13,6 @@ type props = {
 
 export const InviteMembersButton = ({ scheduleId }: props) => {
   const [isShowing, setIsShowing] = useState(false)
-  const [inviteCode, setInviteCode] = useState("")
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -33,8 +31,7 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
         const inviteCode = await generateInviteCode(scheduleId)
         if (inviteCode === null) return
         setIsShowing(true)
-        const generatedInviteCode = "4c036gu7fn5"
-        const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${generatedInviteCode}`
+        const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${inviteCode}`
         const inviteParam = new URLSearchParams(searchParams)
         inviteParam.set("inviteLink", templateURL)
         router.push(pathname + "?" + inviteParam.toString())

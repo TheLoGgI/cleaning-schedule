@@ -3,7 +3,7 @@
 import { Role } from "@/app/components/EnumRole"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { Tables } from "@/app/helpers/tables"
 
 // import { useRouter } from 'next/router'
@@ -60,6 +60,7 @@ export async function insertScheduleRow(formData: FormData) {
     }
 
     revalidatePath("/dashboard", "page")
+    revalidateTag(Tables.ScheduleRow)
   } catch (error) {
     console.warn(error)
   }
