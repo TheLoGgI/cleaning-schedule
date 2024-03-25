@@ -6,6 +6,7 @@ import { Resend } from "resend"
 import { cookies } from "next/headers"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
+import { rollSchedules } from "@/app/server/actions/rollSchedulesJob"
 
 const resend = new Resend(process.env.RESEND_API_KEY ?? undefined)
 
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const secret = url.searchParams.get("cron_api_secret")
 
+  // TODO: Add Authorization header check
   if (
     secret !== process.env.CRON_SECRET
     // || request.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
@@ -24,7 +26,6 @@ export async function GET(request: Request) {
   }
 
   // Get current week number
-
   const today = new Date()
   const currentWeekNumber = getWeekNumber(today)
 
@@ -75,8 +76,10 @@ export async function GET(request: Request) {
     from: "ME <business@lasseaakjaer.com>",
     to: "lasse_aakjaer@hotmail.com",
     subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
-    text: JSON.stringify(emailRecipients) + "was sent email of schedule week",
+    text: JSON.stringify(emailRecipients) + " was sent email of schedule week",
   })
+
+  await rollSchedules()
 
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 }

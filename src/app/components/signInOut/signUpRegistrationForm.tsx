@@ -136,7 +136,7 @@ export default function SignUpRegistrationForm() {
               </div>
             </div>
 
-            {/* <Messages state={state} /> */}
+            <Messages state={state} />
 
             <div>
               <PendingButton

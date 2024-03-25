@@ -50,7 +50,6 @@ export default function ModalInsertScheduleRow({
       <dialog
         ref={dialogRef}
         className="w-full max-w-md max-h-full bg-transparent z-20"
-        // open={showModal}
       >
         <div className="bg-white rounded-lg shadow-lg dark:bg-gray-700">
           <header className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">

@@ -16,7 +16,7 @@ export type ScheduleRow = {
   weekNr: number
 }
 
-const resetSchedule = async (supabase: SupabaseClient, scheduleId: string) => {
+export const resetSchedule = async (supabase: SupabaseClient, scheduleId: string) => {
   // Count rows in ScheduleRow for scheduleId
   const scheduleRows = await supabase
     .from("ScheduleRow")

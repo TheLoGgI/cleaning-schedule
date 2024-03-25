@@ -1,6 +1,6 @@
 import { CheckIcon } from "@heroicons/react/20/solid"
 
-const includedFeatures = [
+export const includedFeatures = [
   "Create unlimited schedules",
   "Invite unlimited members",
   "Overviews of all schedules in dashboard",
