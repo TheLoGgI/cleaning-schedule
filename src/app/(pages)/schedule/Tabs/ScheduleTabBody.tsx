@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge"
 import { useState } from "react"
 import { useUserRole } from "@/app/hooks/useUserRole"
 import { useStore } from "@/app/hooks/useStore"
+import {  deleteScheduleRoomsRowAction } from "@/app/server/actions/deleteScheduleRoomsRow"
 
 const RoomCellAdmin = ({
   room,
@@ -53,8 +54,8 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
   ) => {
     const newState = isSelected
       ? selectedRoomSwap.filter(
-          (scheduleItem) => scheduleItem.scheduleRowId !== room.row
-        )
+        (scheduleItem) => scheduleItem.scheduleRowId !== room.row
+      )
       : [...selectedRoomSwap, { scheduleRowId: room.row, weekNr }]
 
     if (newState.length == 2) {
@@ -92,6 +93,31 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
                 />
               )
             })}
+            <td className="py-4">
+              <form action={deleteScheduleRoomsRowAction}>
+                <input
+                  type="hidden"
+                  name="scheduleId"
+                  value={schedule.scheduleId}
+                />
+                {week.rooms.map((room, index: number) => {
+                  return (
+                    <input
+                      key={room?.roomNr ?? 0 + index}
+                      type="hidden"
+                      name="id"
+                      value={room.row}
+                    />
+                  )
+                })}
+                <button className="block mx-auto text-white bg-red-700 enabled:hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800  disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  type="submit"
+                  title="Delete Row"
+                >
+                  Delete Row
+                </button>
+              </form>
+            </td>
           </tr>
         )
       })}
@@ -136,7 +162,7 @@ export const DisplayTableBody = ({ schedule }: { schedule: Schedule }) => {
   const isUserAdminOrModerator =
     userRole === Role.Admin || userRole === Role.Moderator
 
-  
+
 
   return isUserAdminOrModerator && editMode === true ? (
     <ScheduleTabBodyAdmin schedule={schedule} />
