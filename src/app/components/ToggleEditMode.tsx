@@ -13,6 +13,6 @@ export const ToggleEditModeButton = () => {
   type="button"
   onClick={toggleEditMode}
 >
-  {editMode ? "Toggle OFF Swap" : "Toggle ON Swap" }
+  {editMode ? "Editing..." : "Edit" }
 </button>
 }
