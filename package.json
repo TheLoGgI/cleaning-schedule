@@ -28,7 +28,7 @@
     "react-dom": "^18",
     "react-email": "1.9.5",
     "resend": "^2.0.0",
-    "supabase": "^1.123.4",
+    "supabase": "^1.136.3",
     "tailwind-merge": "^1.14.0",
     "zustand": "^4.5.0"
   },
