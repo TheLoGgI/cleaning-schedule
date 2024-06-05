@@ -9,11 +9,13 @@ import {
   use,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react"
 
 import { updateRoom } from "@/app/server/actions/updateRoom"
+import { Spinner } from "@/app/components/spinner"
 
 type Props = {
   scheduleId: string
@@ -86,13 +88,23 @@ export const ModalUpdateRoomContextProvider = ({ children }: any) => {
 
 export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
   function ModalUpdateRoom({ scheduleId, room }, ref) {
+    
+    const [roomNr, setRoomNr] = useState(room?.roomNr || 0)
+    const [firstName, setFirstName] = useState(room?.User?.firstName || "")
+    const [lastName, setLastName] = useState(room?.User?.lastName || "")
     const [activeInSchedule, setActiveInSchedule] = useState(
       room?.activeInSchedule || false
     )
-
-    useEffect(() => {
-      if (room) setActiveInSchedule(room.activeInSchedule)
-    }, [room])
+    
+    useLayoutEffect(() => {
+      // FIX: set the initial value of activeInSchedule, before the component is rendered
+      if (room) {
+        setRoomNr(room.roomNr)
+        setFirstName(room.User.firstName)
+        setLastName(room.User.lastName)
+        setActiveInSchedule(room.activeInSchedule)
+      }
+      }, [room])
 
     return (
       <>
@@ -147,7 +159,9 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
                 </label>
                 <input
                   type="number"
-                  defaultValue={room?.roomNr}
+                  inputMode="numeric"
+                  value={roomNr}
+                  onChange={(e) => setRoomNr((e.target as HTMLInputElement).valueAsNumber)}
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
                   id="roomNr"
                   name="roomNr"
@@ -162,8 +176,10 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
                   id="firstName"
                   name="firstName"
-                  defaultValue={room?.User?.firstName}
-                  required
+                  value={firstName}
+                  onChange={(e) => 
+                    setFirstName((e.target as HTMLInputElement).value)
+                  }
                 />
               </div>
               <div className="flex flex-col">
@@ -174,7 +190,10 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
                   className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
                   name="lastName"
                   id="lastName"
-                  defaultValue={room?.User.lastName}
+                  value={lastName}
+                  onChange={(e) => 
+                    setLastName((e.target as HTMLInputElement).value)
+                  }
                   required
                 />
               </div>
