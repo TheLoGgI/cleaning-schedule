@@ -14,18 +14,19 @@ type UpdateRoomSelect = {
 
 export async function updateRoom(formData: FormData) {
   const roomId = formData.get("roomId")
-  const scheduleId = formData.get("scheduleId")
-  const inCleaningSchedule = formData.get("inCleaningSchedule")
   // TODO: better error handling
-
+  
   if (!roomId) throw new Error("id is required")
+    const scheduleId = formData.get("scheduleId")
+    const inCleaningSchedule = formData.get("inCleaningSchedule")
+    const roomNr = formData.get("roomNr")
 
   const supabase = createServerComponentClient({ cookies })
   // try {
   const updatedRoom = (await supabase
     .from("Room")
     .update({
-      roomNr: formData.get("roomNr"),
+      roomNr,
       activeInSchedule: inCleaningSchedule !== null ? true : false,
     })
     .match({ id: roomId, scheduleID: scheduleId })
@@ -49,5 +50,5 @@ export async function updateRoom(formData: FormData) {
   }
 
   revalidateTag("rooms")
-  revalidatePath(`/schedule/${scheduleId}`)
+  revalidatePath(`/schedule/[slug]`, "page")
 }

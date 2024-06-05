@@ -89,7 +89,7 @@ export default function ModalCreateDashboard({
                 formAction(formData)
 
                 setTimeout(() => {
-                  state.status === 200 && dialogRef.current?.close()
+                  if  (state.status === 200) dialogRef.current?.close()
                   formRef.current?.reset()
                 }, 800)
               }}
