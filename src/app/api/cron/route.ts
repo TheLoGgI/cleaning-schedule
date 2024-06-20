@@ -13,6 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY ?? undefined)
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const secret = url.searchParams.get("cron_api_secret")
+  const debugMode = url.searchParams.get("debug")
 
   // TODO: Add Authorization header check
   if (
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
     .select(
       `
     scheduleId,
-    room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
+    room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email, notification))
     `
     )
     .eq("weekNr", currentWeekNumber + 1)
@@ -45,13 +46,25 @@ export async function GET(request: Request) {
     const scheduleId = scheduleRow.scheduleId
     delete scheduleRow.scheduleId // Remove scheduleId from object, destructing behavior
     const usersOfScheduleRow = Object.values(scheduleRow).filter(
-      (user) => user.User.email
+      (user) => user.User.email && user.User.notification
     )
 
     emailRecipients.push(
       ...usersOfScheduleRow.map((user) => ({ scheduleId, ...user }))
     )
   }
+
+  
+if (debugMode == "true") {
+  const names = emailRecipients.map((recipient) => recipient.User.firstName)
+  await resend.emails.send({
+    from: "ME <business@lasseaakjaer.com>",
+    to: "lasse_aakjaer@hotmail.com",
+    subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
+    text: JSON.stringify(names) + " was sent email of schedule week",
+  })
+  return NextResponse.json({ query: emailRecipients }, { status: 200 })
+} 
 
   for (const recipient of emailRecipients) {
     const responseResend = await resend.emails.send({
@@ -71,15 +84,16 @@ export async function GET(request: Request) {
       responseResend.data?.id
     )
   }
-
+  
   await resend.emails.send({
     from: "ME <business@lasseaakjaer.com>",
     to: "lasse_aakjaer@hotmail.com",
     subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
     text: JSON.stringify(emailRecipients) + " was sent email of schedule week",
   })
-
+  
   await rollSchedules()
 
+  
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 }
