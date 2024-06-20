@@ -63,6 +63,9 @@ if (debugMode == "true") {
     subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
     text: JSON.stringify(names) + " was sent email of schedule week",
   })
+  
+  await rollSchedules()
+
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 } 
 
@@ -92,7 +95,7 @@ if (debugMode == "true") {
     text: JSON.stringify(emailRecipients) + " was sent email of schedule week",
   })
   
-  await rollSchedules()
+
 
   
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
