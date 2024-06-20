@@ -9,8 +9,7 @@
     "lint": "next lint",
     "supabase:types": "supabase gen types typescript --project-id jcdoxwlbxpofoussndlc > src/app/types/supabase.ts",
     "supabase:migration": "supabase migration new",
-    "email": "email dev --dir src/app/components/emails",
-    "supa": "supabase"
+    "email": "email dev --dir src/app/components/emails"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -37,9 +36,12 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
+    "daisyui": "^4.12.2",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
     "postcss": "^8",
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3",
     "typescript": "^5"
   }

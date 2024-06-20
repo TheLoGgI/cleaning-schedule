@@ -2,7 +2,6 @@
 
 import { cookies } from "next/headers"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { redirect } from "next/navigation"
 
 export async function signIn(prevState: any, formData: FormData, permalink: string) {
   const email = String(formData.get("email"))
@@ -23,5 +22,4 @@ export async function signIn(prevState: any, formData: FormData, permalink: stri
   }
 
   return { status: "success"}
-  // redirect("/dashboard")
 }

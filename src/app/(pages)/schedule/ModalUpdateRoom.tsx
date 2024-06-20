@@ -6,16 +6,13 @@ import {
   SetStateAction,
   createContext,
   forwardRef,
-  use,
   useContext,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react"
 
 import { updateRoom } from "@/app/server/actions/updateRoom"
-import { Spinner } from "@/app/components/spinner"
 
 type Props = {
   scheduleId: string

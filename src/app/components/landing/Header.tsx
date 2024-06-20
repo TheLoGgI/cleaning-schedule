@@ -13,7 +13,7 @@ import { useUser } from "@/app/hooks/useUser"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
-  //   { name: "Features", href: "#" },
+    { name: "Profile", href: "/profile" },
   //   { name: "Marketplace", href: "#" },
   //   { name: "Company", href: "#" },
 ]
@@ -45,20 +45,21 @@ export default function Header() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
+        
         {user !== null && (
-          <div className="hidden lg:flex lg:gap-x-12">
+          <div className="hidden lg:block navbar-center">
             {navigation.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="btn btn-ghost"
               >
                 {item.name}
               </a>
