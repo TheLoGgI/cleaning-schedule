@@ -32,7 +32,7 @@ export const InviteMembersButton = ({ scheduleId }: props) => {
         if (inviteCode === null) return
         setIsShowing(true)
         const templateURL = `${window.location.origin}/signup?scheduleId=${scheduleId}&inviteCode=${inviteCode}`
-        const inviteParam = new URLSearchParams(searchParams)
+        const inviteParam = new URLSearchParams(searchParams.toString())
         inviteParam.set("inviteLink", templateURL)
         router.push(pathname + "?" + inviteParam.toString())
 
@@ -54,7 +54,6 @@ export const InviteLink = () => {
   const searchParams = useSearchParams()
 
   const inviteLink = searchParams.get("inviteLink")
-  console.log("inviteLink: ", inviteLink)
 
   return (
     <Transition

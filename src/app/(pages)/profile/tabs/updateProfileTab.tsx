@@ -12,12 +12,11 @@ const initialState = {
 
 export function UpdateProfileTab({ user }: { user: AccountUserData }) {
     const [state, formAction] = useFormState(updateUserProfile, initialState)
-    console.log('user: ', user);
 
     return (
         <TabPanel >
             <form action={formAction} className="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="flex flex-col space-y-1.5 p-6">
+                <div className="flex flex-col space-y-1.5 p-6">
                     <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Update profile settings</h3>
                     <p className="text-sm text-muted-foreground">Change your name and notification setting</p>
                 </div>

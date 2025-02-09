@@ -16,7 +16,6 @@ const EconomyTab = ({
   users: User[]
   scheduleId: string
 }) => {
-  console.log("users: ", users)
 
   const revenue = users.length * 40
 

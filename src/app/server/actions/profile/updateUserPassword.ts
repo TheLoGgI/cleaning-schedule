@@ -1,38 +1,34 @@
-"use server"
+"use server";
 
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export async function updateUserPassword(prevState: any, formData: FormData) {
+  const newPassword = String(formData.get("new-password"));
+  const confirmed = String(formData.get("confirm-password"));
 
-    const newPassword = String(formData.get("new-password"))
-    const confirmed = String(formData.get("confirm-password"))
-    
-    if (newPassword !== confirmed) {
-        return {
-            status: 400,
-            body: "Passwords do not match",
-        }
-    }
-    
-    const supabase = createServerComponentClient({ cookies })
+  if (newPassword !== confirmed) {
+    return {
+      status: 400,
+      body: "Passwords do not match",
+    };
+  }
 
-    const updatedUser = await supabase.auth.updateUser({
-        password: newPassword,
-    })
+  const supabase = createServerComponentClient({ cookies });
 
-    if (updatedUser.error) {
-        return {
-            status: 400,
-            body: "Choose a stronger password",
-        }
-    
-    }
-    console.log('updatedUser: ', updatedUser);
+  const updatedUser = await supabase.auth.updateUser({
+    password: newPassword,
+  });
 
-        return {
-            status: 200,
-            body: "User password updated",
-        }
-    
+  if (updatedUser.error) {
+    return {
+      status: 400,
+      body: "Choose a stronger password",
+    };
+  }
+
+  return {
+    status: 200,
+    body: "User password updated",
+  };
 }
