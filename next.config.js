@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   experimental: {
-    instrumentationHook: true
+    instrumentationHook: true,
+    serverComponentsExternalPackages: ["better-sqlite3"],
   },
   i18n: {
     locales: ["en"],

@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "supabase:types": "supabase gen types typescript --project-id jcdoxwlbxpofoussndlc > src/app/types/supabase.ts",
-    "supabase:migration": "supabase migration new",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "email": "email dev --dir src/app/components/emails"
   },
   "dependencies": {
@@ -19,25 +19,26 @@
     "@react-email/components": "0.0.11",
     "@react-email/html": "0.0.6",
     "@react-email/render": "0.0.9",
-    "@supabase/auth-helpers-nextjs": "^0.8.3",
-    "@supabase/supabase-js": "^2.38.4",
     "@tailwindcss/forms": "^0.5.6",
     "@vercel/analytics": "^1.1.1",
+    "better-sqlite3": "^12.8.0",
+    "drizzle-orm": "^0.45.2",
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-email": "1.9.5",
     "resend": "^2.0.0",
-    "supabase": "^1.136.3",
     "tailwind-merge": "^1.14.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
     "daisyui": "^4.12.2",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
     "postcss": "^8",
@@ -45,5 +46,8 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3", "esbuild", "fast-folder-size"]
   }
 }

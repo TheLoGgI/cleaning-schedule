@@ -1,10 +1,8 @@
 "use server"
 
-import {
-  createServerComponentClient,
-} from "@supabase/auth-helpers-nextjs"
-
-import { cookies } from "next/headers"
+import { db } from "@/lib/db"
+import { schedule, scheduleRow, room as roomTable } from "@/lib/schema"
+import { lte } from "drizzle-orm"
 import { shuffleRooms } from "@/app/helpers/shuffleRooms"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 
@@ -15,79 +13,38 @@ export type ScheduleRow = {
   weekNr: number
 }
 
-type Schedule = {
-  id: string
-  
-  [key: string]: any
-}
-
-
 export async function rollSchedules() {
+  const currentWeekNumber = getWeekNumber(new Date())
 
-  const supabase = createServerComponentClient<any>({ cookies })
+  // Remove old schedule rows (past weeks)
+  await db
+    .delete(scheduleRow)
+    .where(lte(scheduleRow.weekNr, currentWeekNumber - 1))
 
-  const schedules = await supabase
-  .from("Schedule")
-  .select(
-    `id, 
-    rooms: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
-    `)
+  const schedules = await db.query.schedule.findMany({
+    with: {
+      rooms: {
+        with: { user: true },
+      },
+    },
+  })
 
-    const currentWeekNumber = getWeekNumber(new Date())
-  
-  // Remove all schedule rows
-  await supabase
-      .from("ScheduleRow")
-      .delete()
-      .lte("weekNr", currentWeekNumber - 1)
-
-  const collectionRows = schedules.data?.flatMap((schedule: Schedule ) => {
-    const scheduleId = schedule.id
-    
-    const shuffledRooms = shuffleRooms((schedule.rooms as unknown as Room[]) || [])
-  
-    // Create new schedule rows and insert them into the database
+  const collectionRows = schedules.flatMap((s) => {
+    const shuffledRooms = shuffleRooms((s.rooms as unknown as Room[]) || [])
     const newScheduleRows: Omit<ScheduleRow, "id">[] = []
     let weekNr = currentWeekNumber + 1
     for (let index = 0; index < shuffledRooms.length; index += 2, weekNr++) {
       const first = shuffledRooms[index]
       const second = shuffledRooms[index + 1]
-  
-      if (first === undefined || second === undefined) {
-        newScheduleRows.push(
-          {
-            scheduleId,
-            weekNr: weekNr,
-            room: first?.id ?? null,
-          },
-          {
-            scheduleId,
-            weekNr: weekNr,
-            room: second?.id ?? null,
-          }
-        )
-  
-        // Skip the rest of the loop and continue with the next iteration
-        continue
-      }
-  
       newScheduleRows.push(
-        {
-          scheduleId,
-          weekNr: weekNr,
-          room: first.id,
-        },
-        {
-          scheduleId,
-          weekNr: weekNr,
-          room: second.id,
-        }
+        { scheduleId: s.id, weekNr, room: first?.id ?? null },
+        { scheduleId: s.id, weekNr, room: second?.id ?? null }
       )
     }
-
     return newScheduleRows
-
   })
-  
-  await supabase.from("ScheduleRow").insert(collectionRows)
+
+  if (collectionRows.length > 0) {
+    await db.insert(scheduleRow).values(collectionRows)
+  }
 }

@@ -1,5 +1,4 @@
 import { ModalUpdateRoomButton } from "./ModalUpdateRoom"
-import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { deleteRoom } from "@/app/server/actions/deleteRoomAction"
 
 type Props = {
@@ -14,14 +13,13 @@ export const ActionsColumn = ({ room, scheduleId }: Props) => {
       <form action={deleteRoom} className="inline-block">
         <input type="hidden" name="roomId" value={room.id} />
         <input type="hidden" name="scheduleId" value={scheduleId} />
-        <PendingButton
+        <button
           type="submit"
           name="roomId"
           className="font-medium text-red-600 dark:text-red-500 hover:underline sm:ml-2 py-2 sm:py-0"
-          loading={<span className="text-black">Deleting</span>}
         >
           Delete
-        </PendingButton>
+        </button>
       </form>
     </td>
   )

@@ -3,9 +3,7 @@
 import { ActionsColumn } from "../clientActionsColum"
 import ModalCreateRoom from "../ModalCreateRoom"
 import { ModalUpdateRoomContextProvider } from "../ModalUpdateRoom"
-import { Role } from "@/app/components/EnumRole"
 import { TabPanel } from "@/app/components/Tab"
-import { useUserRole } from "@/app/hooks/useUserRole"
 
 const RoomTab = ({
   rooms,
@@ -14,22 +12,16 @@ const RoomTab = ({
   rooms: Room[]
   scheduleId: string
 }) => {
-  const userRole = useUserRole()
-  const isAdminOrModerator =
-    userRole === Role.Admin || userRole === Role.Moderator
-
   return (
     <>
       <TabPanel>
         <ModalUpdateRoomContextProvider>
           <div className="flex justify-between items-center my-10">
-            {isAdminOrModerator && (
-              <ModalCreateRoom
-                title="Create Room"
-                rooms={rooms}
-                scheduleId={scheduleId}
-              />
-            )}
+            <ModalCreateRoom
+              title="Create Room"
+              rooms={rooms}
+              scheduleId={scheduleId}
+            />
             <p>
               Active rooms:{" "}
               {rooms.filter((value) => value.activeInSchedule).length} of{" "}
@@ -51,11 +43,9 @@ const RoomTab = ({
                     <th scope="col" className="px-6 py-3">
                       In Schedule
                     </th>
-                    {isAdminOrModerator && (
-                      <th scope="col" className="px-6 py-3">
-                        Action
-                      </th>
-                    )}
+                    <th scope="col" className="px-6 py-3">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,16 +57,14 @@ const RoomTab = ({
                       >
                         <td className="px-6 py-4">{room.roomNr} </td>
                         <td className="px-6 py-4 text-black">
-                          {room.User === null
+                          {room.user == null
                             ? "Empty"
-                            : `${room.User.firstName} ${room.User.lastName}`}
+                            : [room.user.firstName, room.user.lastName].filter(Boolean).join(" ") || "Empty"}
                         </td>
                         <td className="px-6 py-4 text-black">
                           {room.activeInSchedule ? "Active" : "Inactive"}{" "}
                         </td>
-                        {isAdminOrModerator && (
-                          <ActionsColumn room={room} scheduleId={scheduleId} />
-                        )}
+                        <ActionsColumn room={room} scheduleId={scheduleId} />
                       </tr>
                     )
                   })}

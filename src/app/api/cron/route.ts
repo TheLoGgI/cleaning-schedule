@@ -3,8 +3,9 @@
 import { NextResponse } from "next/server"
 import { NotifyUsersOfSchedule } from "@/app/components/emails/notifyUserOfSchedule"
 import { Resend } from "resend"
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { db } from "@/lib/db"
+import { scheduleRow, room as roomTable, user as userTable } from "@/lib/schema"
+import { eq } from "drizzle-orm"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 import { rollSchedules } from "@/app/server/actions/rollSchedulesJob"
 
@@ -15,88 +16,54 @@ export async function GET(request: Request) {
   const secret = url.searchParams.get("cron_api_secret")
   const debugMode = url.searchParams.get("debug")
 
-  // TODO: Add Authorization header check
-  if (
-    secret !== process.env.CRON_SECRET
-    // || request.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return NextResponse.json({
-      status: 401,
-      body: "Unauthorized",
-    })
+  if (secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ status: 401, body: "Unauthorized" })
   }
 
-  // Get current week number
   const today = new Date()
   const currentWeekNumber = getWeekNumber(today)
 
-  const supabase = createServerComponentClient({ cookies })
-  const nextWeekScheduleRows = await supabase
-    .from("ScheduleRow")
-    .select(
-      `
-    scheduleId,
-    room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email, notification))
-    `
-    )
-    .eq("weekNr", currentWeekNumber + 1)
+  // Fetch next week's schedule rows with room + user info
+  const nextWeekRows = await db
+    .select({
+      scheduleId: scheduleRow.scheduleId,
+      firstName: userTable.firstName,
+      lastName: userTable.lastName,
+      email: userTable.email,
+    })
+    .from(scheduleRow)
+    .innerJoin(roomTable, eq(scheduleRow.room, roomTable.id))
+    .innerJoin(userTable, eq(roomTable.userId, userTable.id))
+    .where(eq(scheduleRow.weekNr, currentWeekNumber + 1))
 
-  const emailRecipients = []
-  for (const scheduleRow of nextWeekScheduleRows.data ?? []) {
-    const scheduleId = scheduleRow.scheduleId
-    delete scheduleRow.scheduleId // Remove scheduleId from object, destructing behavior
-    const usersOfScheduleRow = Object.values(scheduleRow).filter(
-      (user) => user.User.email && user.User.notification
-    )
+  const emailRecipients = nextWeekRows.filter((r) => r.email)
 
-    emailRecipients.push(
-      ...usersOfScheduleRow.map((user) => ({ scheduleId, ...user }))
-    )
+  if (debugMode === "true") {
+    const names = emailRecipients.map((r) => r.firstName)
+    await resend.emails.send({
+      from: "ME <business@lasseaakjaer.com>",
+      to: "lasse_aakjaer@hotmail.com",
+      subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
+      text: JSON.stringify(names) + " was sent email of schedule week",
+    })
+
+    await rollSchedules()
+    return NextResponse.json({ query: emailRecipients }, { status: 200 })
   }
 
-  
-if (debugMode == "true") {
-  const names = emailRecipients.map((recipient) => recipient.User.firstName)
-  await resend.emails.send({
-    from: "ME <business@lasseaakjaer.com>",
-    to: "lasse_aakjaer@hotmail.com",
-    subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
-    text: JSON.stringify(names) + " was sent email of schedule week",
-  })
-  
-  await rollSchedules()
-
-  return NextResponse.json({ query: emailRecipients }, { status: 200 })
-} 
-
   for (const recipient of emailRecipients) {
-    const responseResend = await resend.emails.send({
+    await resend.emails.send({
       from: "ME <business@lasseaakjaer.com>",
-      to: [recipient.User.email],
+      to: [recipient.email!],
       subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
       react: NotifyUsersOfSchedule({
-        username: `${recipient.User.firstName} ${recipient.User.lastName}`,
+        username: `${recipient.firstName} ${recipient.lastName}`,
         scheduleId: recipient.scheduleId,
       }),
     })
-
-    console.info(
-      "Email sent to ",
-      recipient.User.email,
-      " for roomId: ",
-      responseResend.data?.id
-    )
   }
-  
-  await resend.emails.send({
-    from: "ME <business@lasseaakjaer.com>",
-    to: "lasse_aakjaer@hotmail.com",
-    subject: `Do your duty!, Cleaning week ${currentWeekNumber + 1}`,
-    text: JSON.stringify(emailRecipients) + " was sent email of schedule week",
-  })
-  
 
+  await rollSchedules()
 
-  
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 }

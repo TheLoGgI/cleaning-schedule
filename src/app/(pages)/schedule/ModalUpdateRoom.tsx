@@ -87,8 +87,8 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
   function ModalUpdateRoom({ scheduleId, room }, ref) {
     
     const [roomNr, setRoomNr] = useState(room?.roomNr || 0)
-    const [firstName, setFirstName] = useState(room?.User?.firstName || "")
-    const [lastName, setLastName] = useState(room?.User?.lastName || "")
+    const [firstName, setFirstName] = useState(room?.user?.firstName || "")
+    const [lastName, setLastName] = useState(room?.user?.lastName || "")
     const [activeInSchedule, setActiveInSchedule] = useState(
       room?.activeInSchedule || false
     )
@@ -97,8 +97,8 @@ export const ModalUpdateRoom = forwardRef<HTMLDialogElement, Props>(
       // FIX: set the initial value of activeInSchedule, before the component is rendered
       if (room) {
         setRoomNr(room.roomNr)
-        setFirstName(room.User.firstName)
-        setLastName(room.User.lastName)
+        setFirstName(room.user?.firstName ?? "")
+        setLastName(room.user?.lastName ?? "")
         setActiveInSchedule(room.activeInSchedule)
       }
       }, [room])

@@ -1,12 +1,3 @@
-import {
-  InviteLink,
-  InviteMembersButton,
-} from "@/app/components/InviteMembersButton"
-import {
-  InviteModalButton,
-  ModalInviteUserContextProvider,
-} from "../ModalInviteUser"
-
 import { TabPanel } from "@/app/components/Tab"
 
 const EconomyTab = ({
@@ -25,7 +16,6 @@ const EconomyTab = ({
         <div className="flex justify-between items-center">
           <p>Total Revenue: {revenue} DKK</p>
         </div>
-        <InviteLink />
       </div>
 
       <table>

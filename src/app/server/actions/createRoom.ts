@@ -1,39 +1,28 @@
 "use server"
 
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { db } from "@/lib/db"
+import { user, room } from "@/lib/schema"
 import { revalidatePath } from "next/cache"
 
 export async function createRoom(formData: FormData) {
-  const scheduleId = formData.get("scheduleId")
-  const roomNr = formData.get("roomNr")
-  const firstName = formData.get("firstName")
-  const lastName = formData.get("lastName")
+  const scheduleId = String(formData.get("scheduleId"))
+  const roomNr = Number(formData.get("roomNr"))
+  const firstName = String(formData.get("firstName"))
+  const lastName = formData.get("lastName") as string | null
   const inCleaningSchedule = formData.get("inCleaningSchedule")
 
-  const supabase = createServerComponentClient<any>({ cookies })
-
-  // TODO: check if scheduleId exists eg. params.id
-  // TODO: Create room with existing user
-
   try {
-    const newUser = await supabase
-      .from("User")
-      .insert({
-        firstName,
-        lastName,
-      })
-      .select("id")
-      .single()
+    const [newUser] = await db
+      .insert(user)
+      .values({ firstName, lastName: lastName ?? undefined })
+      .returning({ id: user.id })
 
-    await supabase.from("Room").insert({
+    await db.insert(room).values({
       scheduleID: scheduleId,
-      userId: newUser.data?.id,
-      activeInSchedule: inCleaningSchedule !== null ? true : false,
+      userId: newUser.id,
+      activeInSchedule: inCleaningSchedule !== null,
       roomNr,
     })
-
-    //
   } catch (error) {
     console.warn("error: ", error)
   }

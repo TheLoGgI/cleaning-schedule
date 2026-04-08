@@ -1,63 +1,38 @@
 "use server"
 
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { db } from "@/lib/db"
+import { scheduleRow } from "@/lib/schema"
+import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export async function swapScheduleRoomsRow(
   scheduleId: string,
   scheduleSwap: [ScheduleCell, ScheduleCell]
 ) {
-  if (
-    scheduleSwap[0]?.weekNr === scheduleSwap[1]?.weekNr
-    // ||
-    // (scheduleSwap[0] == null && scheduleSwap[1] == null)
-  ) {
-    // TODO: Throw error
+  if (scheduleSwap[0]?.weekNr === scheduleSwap[1]?.weekNr) {
     return
   }
 
-  const supabase = createServerComponentClient(
-    { cookies },
-    {
-      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-      options: {
-        global: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json, */*; ",
-          },
-        },
-      },
-    }
-  )
-
-  // const auth = await supabase.auth.getUser()
-
-  // First Room
-
   try {
-    await supabase
-      .from("ScheduleRow")
-      .update({
-        weekNr: scheduleSwap[1].weekNr,
-      })
-      .match({
-        scheduleId: scheduleId,
-        id: scheduleSwap[0].scheduleRowId,
-      })
-      .explain()
+    await db
+      .update(scheduleRow)
+      .set({ weekNr: scheduleSwap[1].weekNr })
+      .where(
+        and(
+          eq(scheduleRow.scheduleId, scheduleId),
+          eq(scheduleRow.id, scheduleSwap[0].scheduleRowId)
+        )
+      )
 
-    await supabase
-      .from("ScheduleRow")
-      .update({
-        weekNr: scheduleSwap[0].weekNr,
-      })
-      .match({
-        scheduleId: scheduleId,
-        id: scheduleSwap[1].scheduleRowId,
-      })
-      .explain()
+    await db
+      .update(scheduleRow)
+      .set({ weekNr: scheduleSwap[0].weekNr })
+      .where(
+        and(
+          eq(scheduleRow.scheduleId, scheduleId),
+          eq(scheduleRow.id, scheduleSwap[1].scheduleRowId)
+        )
+      )
   } catch (error) {
     console.warn("error: ", error)
   }

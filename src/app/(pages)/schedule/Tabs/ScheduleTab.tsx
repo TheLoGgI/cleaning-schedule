@@ -10,15 +10,12 @@ import { Popover, Transition } from "@headlessui/react"
 import { useFormState, useFormStatus } from "react-dom"
 
 import ModalInsertScheduleRow from "../ModalInsertScheduleRow"
-import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { PendingProxy } from "@/app/components/PendingProxy"
 import { PrintButton } from "@/app/components/PrintButton"
-import { Role } from "@/app/components/EnumRole"
 import { Spinner } from "@/app/components/spinner"
 import { TabPanel } from "@/app/components/Tab"
 import { generateNextWeekSchedule } from "@/app/server/actions/generateNextWeeksSchedule"
 import { generateSchedule } from "../../../server/actions/generateSchedule"
-import { useUserRole } from "@/app/hooks/useUserRole"
 import { ToggleEditModeButton } from "@/app/components/ToggleEditMode"
 
 const initialState = {
@@ -36,8 +33,7 @@ const ScheduleTab = ({
   startingWeek: number
   children: React.ReactNode
 }) => {
-  const userRole = useUserRole()
-    // @ts-ignore - TODO: fix type formstate
+  // @ts-ignore - TODO: fix type formstate
   const [, generateScheduleFormAction] = useFormState(
     generateSchedule,
     initialState
@@ -47,16 +43,14 @@ const ScheduleTab = ({
     generateNextWeekSchedule,
     initialState
   )
-  const isAdminOrModerator =
-    userRole === Role.Admin || userRole === Role.Moderator
 
   const [pendingState, setPendingState] = useState(false)
 
   return (
     <TabPanel>
       <div className="flex justify-between items-center print:hidden">
-        {isAdminOrModerator && (
-          <div className="flex gap-4 my-10">
+        {/* schedule controls — visible to all users */}
+        <div className="flex gap-4 my-10">
             <ToggleEditModeButton />
             <ModalInsertScheduleRow
               weekNr={startingWeek}
@@ -178,7 +172,6 @@ const ScheduleTab = ({
               )}
             </Popover>
           </div>
-        )}
         <PrintButton />
       </div>
 

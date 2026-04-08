@@ -1,12 +1,14 @@
 "use server"
 
-import { SupabaseClient, UserResponse } from "@supabase/supabase-js"
+import { db } from "@/lib/db"
+import { scheduleRow as scheduleRowTable, room as roomTable, user as userTable } from "@/lib/schema"
+import { eq, asc } from "drizzle-orm"
 
 const deleteRoomUser = {
   id: "empty",
   activeInSchedule: true,
   roomNr: 0,
-  User: {
+  user: {
     id: "empty",
     firstName: "Missing",
     lastName: "Room",
@@ -15,9 +17,7 @@ const deleteRoomUser = {
 }
 
 export const getSchedule = async (
-  scheduleId: string,
-  auth: UserResponse,
-  supabase: SupabaseClient<any, "public", any>
+  scheduleId: string
 ): Promise<
   | (Omit<Schedule, "weeks"> & {
       weeks: {
@@ -27,72 +27,59 @@ export const getSchedule = async (
     })
   | null
 > => {
-  const scheduleRows = await supabase
-    .from("ScheduleRow")
-    .select(
-      `
-      id,
-      weekNr,
-      room: Room(id, activeInSchedule, roomNr, User(id, firstName, lastName, email))
-      `
-    )
-    .eq("scheduleId", scheduleId)
-    .order("weekNr", { ascending: true })
+  const rows = await db
+    .select({
+      id: scheduleRowTable.id,
+      weekNr: scheduleRowTable.weekNr,
+      roomId: roomTable.id,
+      activeInSchedule: roomTable.activeInSchedule,
+      roomNr: roomTable.roomNr,
+      userId: userTable.id,
+      firstName: userTable.firstName,
+      lastName: userTable.lastName,
+      email: userTable.email,
+    })
+    .from(scheduleRowTable)
+    .leftJoin(roomTable, eq(scheduleRowTable.room, roomTable.id))
+    .leftJoin(userTable, eq(roomTable.userId, userTable.id))
+    .where(eq(scheduleRowTable.scheduleId, scheduleId))
+    .orderBy(asc(scheduleRowTable.weekNr))
 
-  const assembleSchedule = (
-    scheduleRows.data as unknown as ScheduleRowData[]
-  )?.reduce<{
+  const assembleSchedule = rows.reduce<{
     scheduleId: string
-    weeks: Map<
-      number,
-      {
-        weekNr: number
-        rooms: Array<Omit<Room, "id"> & { row: number }>
-      }
-    >
+    weeks: Map<number, { weekNr: number; rooms: Array<Omit<Room, "id"> & { row: number }> }>
   }>(
-    (scheduleCollection, row) => {
-      const { activeInSchedule, roomNr, User } =
-        row.room !== null ? row.room : deleteRoomUser
+    (acc, row) => {
+      const roomEntry =
+        row.roomId !== null
+          ? {
+              activeInSchedule: row.activeInSchedule ?? true,
+              roomNr: row.roomNr ?? 0,
+              user: {
+                id: row.userId ?? "empty",
+                firstName: row.firstName ?? "Missing",
+                lastName: row.lastName ?? "Room",
+                email: row.email ?? "",
+              },
+            }
+          : {
+              activeInSchedule: deleteRoomUser.activeInSchedule,
+              roomNr: deleteRoomUser.roomNr,
+              user: deleteRoomUser.user,
+            }
 
-      if (scheduleCollection.weeks.has(row.weekNr)) {
-        const existingRowForWeek = scheduleCollection.weeks.get(row.weekNr)
-        if (!existingRowForWeek) return scheduleCollection
-
-        existingRowForWeek.rooms.push({
-          row: row.id,
-          activeInSchedule,
-          roomNr,
-          User,
+      if (acc.weeks.has(row.weekNr)) {
+        acc.weeks.get(row.weekNr)!.rooms.push({ row: row.id, ...roomEntry })
+      } else {
+        acc.weeks.set(row.weekNr, {
+          weekNr: row.weekNr,
+          rooms: [{ row: row.id, ...roomEntry }],
         })
-
-        return scheduleCollection
       }
-
-      scheduleCollection.weeks.set(row.weekNr, {
-        weekNr: row.weekNr,
-        rooms: [
-          {
-            row: row.id,
-            activeInSchedule,
-            roomNr,
-            User,
-          },
-        ],
-      })
-      return scheduleCollection
+      return acc
     },
-    {
-      scheduleId,
-      weeks: new Map(),
-      // Sample Format
-      // [
-      //   // { weekNr: 1, rooms: [{ roomNr: 1, User: { firstName: "John", lastName: "Doe" } }] }
-      // ],
-    }
+    { scheduleId, weeks: new Map() }
   )
-
-  if (!assembleSchedule) return null
 
   return {
     ...assembleSchedule,

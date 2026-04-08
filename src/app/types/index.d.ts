@@ -1,8 +1,8 @@
 type User = {
   id: string
   firstName: string
-  lastName: string
-  email: string
+  lastName: string | null
+  email: string | null
 }
 
 type ScheduleRowData = {
@@ -48,11 +48,11 @@ type Room = {
   row: number
   activeInSchedule: boolean
   roomNr: number
-  User: User
+  user: User | null
 }
 type RoomWithoutId = {
   row: number
   activeInSchedule: boolean
   roomNr: number
-  User: User
+  user: User | null
 }

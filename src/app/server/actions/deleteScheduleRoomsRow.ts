@@ -1,40 +1,26 @@
 "use server"
 
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { db } from "@/lib/db"
+import { scheduleRow } from "@/lib/schema"
+import { and, eq, inArray } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export async function deleteScheduleRoomsRowAction(formdata: FormData) {
-
-  const ids = formdata.getAll('id')
-  const scheduleId = formdata.getAll('scheduleId')
-
-  const supabase = createServerComponentClient(
-    { cookies },
-    {
-      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-      options: {
-        global: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json, */*; ",
-          },
-        },
-      },
-    }
-  )
+  const ids = formdata.getAll("id").map(Number)
+  const scheduleId = String(formdata.get("scheduleId"))
 
   try {
-    await supabase
-      .from("ScheduleRow")
-      .delete()
-      .in("id", ids)
-      .eq("scheduleId", scheduleId)
+    await db
+      .delete(scheduleRow)
+      .where(
+        and(
+          inArray(scheduleRow.id, ids),
+          eq(scheduleRow.scheduleId, scheduleId)
+        )
+      )
 
     revalidatePath("/schedule/[id]", "page")
   } catch (error) {
-    // throw new Error("error: can't delete room")
     console.warn("error: ", error)
   }
-
 }

@@ -11,9 +11,6 @@ import {
   useState,
 } from "react"
 
-import Messages from "../login/messages"
-import { inviteUser } from "@/app/server/actions/inviteUser"
-
 type Props = {
   scheduleId: string
   user: User | null
@@ -27,42 +24,6 @@ const ModalInviteUserContext = createContext<{
   setModalState: () => null,
 })
 
-const useInviteUserModal = ({ scheduleId, user }: Props) => {
-  const { ref, setModalState } = useContext(ModalInviteUserContext)
-
-  if (ref === null)
-    return {
-      open: () => null,
-      close: () => null,
-    }
-
-  return {
-    open: () => {
-      setModalState({ scheduleId, user })
-      ref.current?.showModal()
-    },
-    close: () => {
-      ref.current?.close()
-    },
-  }
-}
-
-export const InviteModalButton = ({ scheduleId, user }: Props) => {
-  const { open } = useInviteUserModal({
-    scheduleId,
-    user,
-  })
-
-  return (
-    <button
-      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-      type="button"
-      onClick={() => open()}
-    >
-      {user?.email == null ? "Invite" : "Resent invite"}
-    </button>
-  )
-}
 
 export const ModalInviteUserContextProvider = ({ children }: any) => {
   const ref = useRef<HTMLDialogElement>(null)
@@ -70,8 +31,6 @@ export const ModalInviteUserContextProvider = ({ children }: any) => {
     scheduleId: "",
     user: null,
   })
-
-  // TODO: Fix initial state has to be invoked twice
 
   return (
     <ModalInviteUserContext.Provider value={{ ref, setModalState }}>
@@ -87,17 +46,17 @@ export const ModalInviteUserContextProvider = ({ children }: any) => {
 
 export const ModalInviteUser = forwardRef<HTMLDialogElement, Props>(
   function ModalInviteUser({ scheduleId, user }, ref) {
-    // TODO: add optimistic update for closing modal
+    const [inviteCode, setInviteCode] = useState<string | null>(null)
+
     return (
       <dialog
         ref={ref}
         className="w-full max-w-md max-h-full bg-transparent z-20 top-0 bottom-0"
-        // open={showModal}
       >
         <div className="bg-white rounded-lg shadow-lg dark:bg-gray-700">
           <header className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Invite User: {user?.firstName} {user?.lastName}
+              Invite to Schedule
             </h3>
             <button
               type="button"
@@ -125,40 +84,47 @@ export const ModalInviteUser = forwardRef<HTMLDialogElement, Props>(
               <span className="sr-only">Close modal</span>
             </button>
           </header>
-          <form
-            className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"
-            action={(formAction) => {
-              inviteUser(formAction)
-              // @ts-ignore
-              // if (ref && ref.current) ref.current.close()
-            }}
-          >
-            <input type="hidden" name="scheduleId" value={scheduleId} />
-            {user && <input type="hidden" name="userId" value={user.id} />}
-            <div className="flex flex-col">
-              <label className="text-md dark:text-white" htmlFor="email">
-                User Email
-              </label>
-              <input
-                type="email"
-                // defaultValue={room.roomNr}
-                className="rounded-md px-4 py-2 bg-inherit dark:bg-slate-500 dark:text-white border mb-6"
-                name="email"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="border border-gray-700 dark:border-gray-300 bg-blue-400 hover:bg-blue-500 dark:text-white rounded px-4 py-2 text-black"
-            >
-              Invite User
-            </button>
-
-            {/* <Messages /> */}
-          </form>
+          <div className="flex-1 flex flex-col w-full px-10 py-4 pb-6 gap-4">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              Share the invite code below with the person you want to add.
+              They can enter this code when creating their user account.
+            </p>
+            {inviteCode ? (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium dark:text-white">
+                  Invite Code
+                </label>
+                <code className="block bg-gray-100 dark:bg-gray-800 rounded px-4 py-2 text-lg font-mono tracking-widest text-center">
+                  {inviteCode}
+                </code>
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => navigator.clipboard.writeText(inviteCode)}
+                >
+                  Copy to clipboard
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="border border-gray-700 dark:border-gray-300 bg-blue-400 hover:bg-blue-500 dark:text-white rounded px-4 py-2 text-black"
+                onClick={async () => {
+                  const res = await fetch(
+                    `/api/invite-code?scheduleId=${scheduleId}`
+                  )
+                  const data = await res.json()
+                  if (data.code) setInviteCode(data.code)
+                }}
+              >
+                Generate Invite Code
+              </button>
+            )}
+          </div>
         </div>
       </dialog>
     )
   }
 )
+
+

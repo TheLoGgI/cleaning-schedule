@@ -4,7 +4,6 @@ import { Role } from "@/app/components/EnumRole"
 import { swapScheduleRoomsRow } from "@/app/server/actions/swapScheduleRoomsRow"
 import { twMerge } from "tailwind-merge"
 import { useState } from "react"
-import { useUserRole } from "@/app/hooks/useUserRole"
 import { useStore } from "@/app/hooks/useStore"
 import {  deleteScheduleRoomsRowAction } from "@/app/server/actions/deleteScheduleRoomsRow"
 
@@ -34,7 +33,7 @@ const RoomCellAdmin = ({
       >
         {room === null
           ? "Empty"
-          : `${room.roomNr}: ${room.User?.firstName} ${room.User?.lastName}`}
+          : `${room.roomNr}: ${room.user?.firstName} ${room.user?.lastName}`}
         <span className="font-semibold group-hover:visible invisible">
           Swap
         </span>
@@ -126,6 +125,7 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
 }
 
 export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
+  console.log('schedule: ', schedule);
   return (
     <tbody>
       {schedule.weeks.map((row: any) => {
@@ -150,21 +150,15 @@ const RoomCell = ({ room }: { room: Room }) => {
     <td className="px-6 py-4 text-black">
       {room === null
         ? "Empty"
-        : `${room.roomNr}: ${room.User?.firstName} ${room.User?.lastName}`}
+        : `${room.roomNr}: ${room.user?.firstName} ${room.user?.lastName}`}
     </td>
   )
 }
 
 export const DisplayTableBody = ({ schedule }: { schedule: Schedule }) => {
-  const userRole = useUserRole()
   const { editMode } = useStore()
 
-  const isUserAdminOrModerator =
-    userRole === Role.Admin || userRole === Role.Moderator
-
-
-
-  return isUserAdminOrModerator && editMode === true ? (
+  return editMode === true ? (
     <ScheduleTabBodyAdmin schedule={schedule} />
   ) : (
     <ScheduleTabBody schedule={schedule} />

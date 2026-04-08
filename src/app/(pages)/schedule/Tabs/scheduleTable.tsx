@@ -1,13 +1,8 @@
 import { DisplayTableBody } from "./ScheduleTabBody"
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { getSchedule } from "@/app/server/quries/getSchedule"
 
 export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
-  const supabase = createServerComponentClient<any>({ cookies })
-  const auth = await supabase.auth.getUser()
-
-  const schedule = await getSchedule(scheduleId, auth, supabase)
+  const schedule = await getSchedule(scheduleId)
 
   const maxRoomsInWeek = schedule?.weeks.reduce(
     (roomsInWeek, row) =>
@@ -27,7 +22,7 @@ export const ScheduleTable = async ({ scheduleId }: { scheduleId: string }) => {
   }
 
   return (
-    <div className="relative mt-8 overflow-x-auto shadow-md sm:rounded-lg ">
+    <div className="relative mt-8 overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 uppercase">
           <tr>

@@ -5,24 +5,18 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import CleaningLogo from "../CleaningLogo"
 import { Dialog } from "@headlessui/react"
 import Link from "next/link"
-import LogoutButton from "../LogoutButton"
 import { twMerge } from "tailwind-merge"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { useUser } from "@/app/hooks/useUser"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
-    { name: "Profile", href: "/profile" },
-  //   { name: "Marketplace", href: "#" },
-  //   { name: "Company", href: "#" },
 ]
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathName = usePathname()
   const isLandingPage = pathName === "/"
-  const user = useUser()
 
   return (
     <header
@@ -52,34 +46,14 @@ export default function Header() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        
-        {user !== null && (
-          <div className="hidden lg:block navbar-center">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="btn btn-ghost"
-              >
-                {item.name}
-              </a>
-            ))}
-          </div>
-        )}
-        {user !== null ? (
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center lg:gap-6">
-            Hey, {user.email}! <LogoutButton />
-          </div>
-        ) : (
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link
-              href="/login"
-              className="text-sm font-semibold leading-6 text-gray-900"
-            >
-              Log in <span aria-hidden="true">&rarr;</span>
-            </Link>
-          </div>
-        )}
+
+        <div className="hidden lg:block navbar-center">
+          {navigation.map((item) => (
+            <a key={item.name} href={item.href} className="btn btn-ghost">
+              {item.name}
+            </a>
+          ))}
+        </div>
       </nav>
       <Dialog
         as="div"
@@ -107,31 +81,16 @@ export default function Header() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                {user !== null &&
-                  navigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-              </div>
-              {user !== null ? (
-                <div className="flex items-center justify-between gap-4">
-                  Hey, {user.email}! <LogoutButton />
-                </div>
-              ) : (
-                <div className="py-6" onClick={() => setMobileMenuOpen(false)}>
-                  <Link
-                    href="/login"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                {navigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
-                    Login
-                  </Link>
-                </div>
-              )}
+                    {item.name}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </Dialog.Panel>

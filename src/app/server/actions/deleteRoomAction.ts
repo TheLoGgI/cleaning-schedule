@@ -1,41 +1,21 @@
 "use server"
 
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import { db } from "@/lib/db"
+import { room } from "@/lib/schema"
+import { and, eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export async function deleteRoom(formData: FormData) {
-  const scheduleId = formData.get("scheduleId")
-  const roomId = formData.get("roomId")
-
-  // TODO: check if user is admin
-
-  const supabase = createServerComponentClient(
-    { cookies },
-    {
-      supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-      options: {
-        global: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json, */*; ",
-          },
-        },
-      },
-    }
-  )
-
-  // TODO: check if scheduleId exists eg. params.id
+  const scheduleId = String(formData.get("scheduleId"))
+  const roomId = String(formData.get("roomId"))
 
   try {
-    await supabase
-      .from("Room")
-      .delete()
-      .match({ id: roomId, scheduleID: scheduleId })
+    await db
+      .delete(room)
+      .where(and(eq(room.id, roomId), eq(room.scheduleID, scheduleId)))
 
     revalidatePath("/schedule/[id]", "page")
   } catch (error) {
-    // throw new Error("error: can't delete room")
     console.warn("error: ", error)
   }
 }

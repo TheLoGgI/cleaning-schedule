@@ -1,9 +1,4 @@
 import {
-  InviteLink,
-  InviteMembersButton,
-} from "@/app/components/InviteMembersButton"
-import {
-  InviteModalButton,
   ModalInviteUserContextProvider,
 } from "../ModalInviteUser"
 
@@ -20,10 +15,8 @@ const MembersTab = ({
     <TabPanel>
       <div className="my-10">
         <div className="flex justify-between items-center">
-          <InviteMembersButton scheduleId={scheduleId} />
           <p>{users.length} Members</p>
         </div>
-        <InviteLink />
       </div>
 
       {users.length > 0 && (
@@ -38,9 +31,6 @@ const MembersTab = ({
                   <th scope="col" className="px-2 lg:px-6 py-3 max-w-[150px]">
                     Email
                   </th>
-                  <th scope="col" className="px-2 lg:px-6 py-3">
-                    Action
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -51,18 +41,12 @@ const MembersTab = ({
                       className="bg-white border-b dark:bg-gray-900 dark:border-gray-700"
                     >
                       <td className="px-2 lg:px-6 py-4 text-black">
-                        {user === null
+                        {user == null
                           ? "Empty"
-                          : `${user.firstName} ${user.lastName}`}
+                          : [user.firstName, user.lastName].filter(Boolean).join(" ") || "Empty"}
                       </td>
                       <td className="px-2 lg:px-6 py-4 truncate max-w-[150px] text-black">
                         {user?.email ?? "No Email"}
-                      </td>
-                      <td className="px-2 lg:px-6 py-4">
-                        <InviteModalButton
-                          user={user}
-                          scheduleId={scheduleId}
-                        />
                       </td>
                     </tr>
                   )

@@ -4,10 +4,6 @@ import { Analytics } from "@vercel/analytics/react"
 import Header from "./components/landing/Header"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
-import { UserContextProvider } from "./hooks/useUser"
-import { cookies } from "next/headers"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { Database } from "./types/supabase"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -16,7 +12,6 @@ export const metadata: Metadata = {
   description: "Simplify Your Cleaning Routine, and Get More Done",
 }
 
-// export const dynamic = "force-dynamic"
 export const revalidate = 0
 
 export default async function RootLayout({
@@ -24,16 +19,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createServerComponentClient<Database>({ cookies })
-  const auth = await supabase.auth.getUser()
-  const user = auth.data.user
-
   return (
-    <html
-      lang="en"
-      // className={`
-      // ${playfair.variable} ${roboto.variable}`}
-    >
+    <html lang="en">
       <head>
         <link
           rel="preconnect"
@@ -62,12 +49,10 @@ export default async function RootLayout({
       </head>
 
       <body className={inter.className}>
-        <UserContextProvider user={user}>
-          <>
-            <Header />
-            <main className="min-h-screen bg-background mt-10">{children}</main>
-          </>
-        </UserContextProvider>
+        <>
+          <Header />
+          <main className="min-h-screen bg-background mt-10">{children}</main>
+        </>
         <Analytics />
       </body>
     </html>

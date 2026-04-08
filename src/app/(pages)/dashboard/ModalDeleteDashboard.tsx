@@ -7,17 +7,14 @@ import {
   createContext,
   forwardRef,
   useContext,
-  useEffect,
   useRef,
   useState,
 } from "react"
 
-import { AuthUser } from "@supabase/supabase-js"
-import { PendingButton } from "@/app/components/signInOut/pendingButton"
 import { deleteScheduleAction } from "@/app/server/actions/deleteScheduleAction"
 import { useFormState } from "react-dom"
 
-type Props = { schedule: DashboardSchedule; authId: AuthUser["id"] }
+type Props = { schedule: DashboardSchedule }
 
 const ModalDeleteScheduleContext = createContext<{
   ref: null | RefObject<HTMLDialogElement>
@@ -27,7 +24,7 @@ const ModalDeleteScheduleContext = createContext<{
   setModalState: () => null,
 })
 
-export const useDeleteSchedule = ({ schedule, authId }: Props) => {
+export const useDeleteSchedule = ({ schedule }: Props) => {
   const { ref, setModalState } = useContext(ModalDeleteScheduleContext)
 
   if (ref === null)
@@ -38,7 +35,7 @@ export const useDeleteSchedule = ({ schedule, authId }: Props) => {
 
   return {
     open: () => {
-      setModalState({ schedule, authId })
+      setModalState({ schedule })
       ref.current?.showModal()
     },
     close: () => {
@@ -47,8 +44,8 @@ export const useDeleteSchedule = ({ schedule, authId }: Props) => {
   }
 }
 
-export const ModalDeleteScheduleButton = ({ schedule, authId }: Props) => {
-  const { open } = useDeleteSchedule({ schedule, authId })
+export const ModalDeleteScheduleButton = ({ schedule }: Props) => {
+  const { open } = useDeleteSchedule({ schedule })
 
   return (
     <button
@@ -68,7 +65,6 @@ export const ModalDeleteScheduleContextProvider = ({ children }: any) => {
     <ModalDeleteScheduleContext.Provider value={{ ref, setModalState }}>
       <ModalDeleteSchedule
         schedule={modalState?.schedule || ({} as DashboardSchedule)}
-        authId={modalState?.authId || ""}
         ref={ref}
       />
       {children}
@@ -76,13 +72,11 @@ export const ModalDeleteScheduleContextProvider = ({ children }: any) => {
   )
 }
 
-const initialState = {
-  // status: "idle",
-}
+const initialState = {}
 
 export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
-  function ModalDeleteSchedule({ schedule, authId }, ref) {
-      // @ts-ignore - TODO: fix type formstate
+  function ModalDeleteSchedule({ schedule }, ref) {
+    // @ts-ignore
     const [state, formAction] = useFormState(deleteScheduleAction, initialState)
 
     return (
@@ -125,7 +119,7 @@ export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
             <form
               className="flex-1 flex flex-col w-full px-10 py-4 pb-6 justify-center gap-2 text-foreground"
               action={async (formData) => {
-                  // @ts-ignore - TODO: fix type formstate
+                // @ts-ignore
                 formAction(formData)
                 setTimeout(() => {
                   // @ts-ignore
@@ -134,9 +128,8 @@ export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
               }}
             >
               <input type="hidden" name="scheduleId" value={schedule.id} />
-              <input type="hidden" name="authId" value={authId} />
 
-              <p className="text-lg ">
+              <p className="text-lg">
                 Are you sure you want to delete this schedule?
               </p>
               <p>
@@ -144,12 +137,12 @@ export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
                 associated with schedule will be removed as well
               </p>
 
-              <PendingButton
+              <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
               >
                 Delete Schedule
-              </PendingButton>
+              </button>
             </form>
           </div>
         </dialog>

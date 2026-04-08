@@ -2,25 +2,19 @@
 
 import { useRef, useState } from "react"
 
-import { AuthUser } from "@supabase/supabase-js"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 import { updateSchedule } from "@/app/server/actions/updateSchedule"
 
-// import { experimental_useFormStatus as useFormStatus } from 'react-dom'
-
 type Props = {
   schedule: DashboardSchedule
-  user: AuthUser
   children?: JSX.Element
 }
 
 export default function ModalUpdateSchedule({
   schedule,
-  user,
   children,
 }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  // const { pending, ...status } = useFormStatus()
   const formRef = useRef<HTMLFormElement>(null)
   const [startingWeek, setStartingWeek] = useState<number>(
     schedule.startingWeek
@@ -86,7 +80,6 @@ export default function ModalUpdateSchedule({
               value={schedule?.id}
               required
             />
-            <input type="hidden" name="authId" value={user?.id} required />
             <div className="flex flex-col">
               <label className="text-md dark:text-white" htmlFor="scheduleName">
                 Schedule Name
