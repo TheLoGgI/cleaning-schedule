@@ -1,5 +1,11 @@
 "use server"
 
+// Add to vercel.json to activate Cron job
+// {
+//       "path": "/api/cron?cron_api_secret=D1pkAYpS5HRNyUKGQSMC1epxYsd44U&debug=true",
+//       "schedule": "0 16 * * 6"
+//     },
+
 import { NextResponse } from "next/server"
 import { NotifyUsersOfSchedule } from "@/app/components/emails/notifyUserOfSchedule"
 import { Resend } from "resend"
@@ -100,3 +106,4 @@ if (debugMode == "true") {
   
   return NextResponse.json({ query: emailRecipients }, { status: 200 })
 }
+

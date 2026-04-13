@@ -2,8 +2,8 @@
   "regions": ["arn1"],
   "crons": [
     {
-      "path": "/api/cron?cron_api_secret=D1pkAYpS5HRNyUKGQSMC1epxYsd44U&debug=true",
-      "schedule": "0 16 * * 6"
+      "path": "/api/keep-alive",
+      "schedule": "0 */12 * * *"
     }
   ]
 }
