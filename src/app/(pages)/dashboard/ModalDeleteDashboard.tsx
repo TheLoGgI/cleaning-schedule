@@ -12,12 +12,12 @@ import {
 } from "react"
 
 import { deleteScheduleAction } from "@/app/server/actions/deleteScheduleAction"
-import { useFormState } from "react-dom"
+import { useActionState } from "react"
 
 type Props = { schedule: DashboardSchedule }
 
 const ModalDeleteScheduleContext = createContext<{
-  ref: null | RefObject<HTMLDialogElement>
+  ref: null | RefObject<HTMLDialogElement | null>
   setModalState: Dispatch<SetStateAction<Props | null>>
 }>({
   ref: null,
@@ -77,7 +77,7 @@ const initialState = {}
 export const ModalDeleteSchedule = forwardRef<HTMLDialogElement, Props>(
   function ModalDeleteSchedule({ schedule }, ref) {
     // @ts-ignore
-    const [state, formAction] = useFormState(deleteScheduleAction, initialState)
+    const [state, formAction] = useActionState(deleteScheduleAction, initialState)
 
     return (
       <>

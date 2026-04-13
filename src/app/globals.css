@@ -1,11 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+@plugin "daisyui" {
+  themes: light;
+}
+@plugin "@tailwindcss/forms";
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --background: 220 14% 96%;
+  --foreground: 220 10% 10%;
 }
 
 /* @media (prefers-color-scheme: dark) {

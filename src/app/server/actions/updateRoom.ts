@@ -31,6 +31,6 @@ export async function updateRoom(formData: FormData) {
       .where(eq(user.id, updatedRoom.userId))
   }
 
-  revalidateTag("rooms")
+  revalidateTag("rooms", "default")
   revalidatePath(`/schedule/[slug]`, "page")
 }

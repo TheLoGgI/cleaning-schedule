@@ -1,53 +1,108 @@
 {
-  "name": "nextjs-blog",
-  "version": "0.1.0",
+  "name": "cleaning-schedule",
+  "version": "2.0.0",
   "private": true,
   "homepage": ".",
+  "main": "electron/main.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8888",
     "build": "next build",
+    "postbuild": "node scripts/copy-standalone-assets.js",
     "start": "next start",
     "lint": "next lint",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "email": "email dev --dir src/app/components/emails"
+    "electron:dev": "next build && node scripts/copy-standalone-assets.js && electron .",
+    "electron:build": "next build && npx @electron/rebuild -m .next/standalone -w better-sqlite3 && electron-builder"
+  },
+  "build": {
+    "appId": "com.cleaningschedule.app",
+    "productName": "cleaning-schedule",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**",
+      "drizzle/**"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "app/.next/standalone"
+      },
+      {
+        "from": "public",
+        "to": "app/public"
+      },
+      {
+        "from": "drizzle",
+        "to": "app/drizzle"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.17",
-    "@heroicons/react": "^2.0.18",
-    "@react-email/button": "0.0.11",
-    "@react-email/components": "0.0.11",
-    "@react-email/html": "0.0.6",
-    "@react-email/render": "0.0.9",
-    "@tailwindcss/forms": "^0.5.6",
-    "@vercel/analytics": "^1.1.1",
+    "@headlessui/react": "^2.2.10",
+    "@heroicons/react": "^2.2.0",
+    "@react-email/button": "0.2.1",
+    "@react-email/components": "1.0.11",
+    "@react-email/html": "0.0.12",
+    "@react-email/render": "2.0.5",
+    "@tailwindcss/forms": "^0.5.11",
+    "@vercel/analytics": "^2.0.1",
     "better-sqlite3": "^12.8.0",
     "drizzle-orm": "^0.45.2",
-    "next": "14.0.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-email": "1.9.5",
-    "resend": "^2.0.0",
-    "tailwind-merge": "^1.14.0",
-    "zustand": "^4.5.0"
+    "next": "16.2.2",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-email": "5.2.10",
+    "resend": "^6.10.0",
+    "tailwind-merge": "^3.5.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@electron/fuses": "^2.1.1",
+    "@electron/rebuild": "^3.6.0",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/better-sqlite3": "^7.6.13",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "autoprefixer": "^10",
-    "daisyui": "^4.12.2",
+    "daisyui": "^5.5.19",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.0",
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1",
+    "eslint": "^10",
+    "eslint-config-next": "16.2.2",
     "postcss": "^8",
-    "prettier": "^3.3.2",
-    "prettier-plugin-tailwindcss": "^0.6.5",
-    "tailwindcss": "^3",
-    "typescript": "^5"
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwindcss": "^4",
+    "typescript": "^6"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["better-sqlite3", "esbuild", "fast-folder-size"]
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "electron",
+      "electron-winstaller",
+      "fast-folder-size"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

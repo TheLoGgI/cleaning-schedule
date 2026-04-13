@@ -125,7 +125,6 @@ export const ScheduleTabBodyAdmin = ({ schedule }: { schedule: Schedule }) => {
 }
 
 export const ScheduleTabBody = ({ schedule }: { schedule: Schedule }) => {
-  console.log('schedule: ', schedule);
   return (
     <tbody>
       {schedule.weeks.map((row: any) => {

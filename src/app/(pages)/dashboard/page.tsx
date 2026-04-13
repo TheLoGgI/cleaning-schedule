@@ -34,7 +34,7 @@ export default async function Dashboard() {
     .where(eq(schedule.createdBy, localUser.id))
 
   return (
-    <section className="container max-w-screen-lg mx-auto">
+    <section className="container max-w-5xl mx-auto">
       <div className="flex align-center justify-between p-4">
         <h1 className="text-2xl">Dashboard</h1>
         <ModalCreateDashboard createdBy={localUser.id} />

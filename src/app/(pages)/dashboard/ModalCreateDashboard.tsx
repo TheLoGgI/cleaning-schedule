@@ -1,14 +1,13 @@
 "use client"
 
-import { useFormState } from "react-dom"
-import { useRef, useState } from "react"
+import { useRef, useState, useActionState, type ReactNode } from "react"
 
 import { createSchedule } from "@/app/server/actions/createSchedule"
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 
 type Props = {
   createdBy: string
-  children?: JSX.Element
+  children?: ReactNode
 }
 
 const initialState = {
@@ -25,7 +24,7 @@ export default function ModalCreateDashboard({ createdBy, children }: Props) {
 
   const [startingWeek, setStartingWeek] = useState<number>(currentWeekNumber)
   // @ts-ignore
-  const [state, formAction] = useFormState(createSchedule, initialState)
+  const [state, formAction] = useActionState(createSchedule, initialState)
 
   return (
     <>

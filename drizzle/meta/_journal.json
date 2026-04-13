@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1775671849572,
+      "tag": "0000_round_rick_jones",
+      "breakpoints": true
+    }
+  ]
+}

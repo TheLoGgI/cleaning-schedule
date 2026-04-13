@@ -1,13 +1,13 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, type ReactNode } from "react"
 
 import { getWeekNumber } from "@/app/helpers/getWeekNumber"
 import { updateSchedule } from "@/app/server/actions/updateSchedule"
 
 type Props = {
   schedule: DashboardSchedule
-  children?: JSX.Element
+  children?: ReactNode
 }
 
 export default function ModalUpdateSchedule({

@@ -17,7 +17,7 @@ type Props = {
 }
 
 const ModalInviteUserContext = createContext<{
-  ref: null | RefObject<HTMLDialogElement>
+  ref: null | RefObject<HTMLDialogElement | null>
   setModalState: Dispatch<SetStateAction<Props>>
 }>({
   ref: null,

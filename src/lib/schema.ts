@@ -66,15 +66,6 @@ export const scheduleRow = sqliteTable("ScheduleRow", {
   show:       integer("show", { mode: "boolean" }).default(true),
 })
 
-// ---------------------------------------------------------------------------
-// InviteKeys – invite codes for joining a schedule
-// ---------------------------------------------------------------------------
-export const inviteKey = sqliteTable("InviteKey", {
-  id:         integer("id").primaryKey({ autoIncrement: true }),
-  key:        text("key").notNull().unique(),
-  createdAt:  text("created_at").notNull().default(sql`(datetime('now'))`),
-  scheduleId: text("scheduleId").notNull().references(() => schedule.id, { onDelete: "cascade" }),
-})
 
 // ---------------------------------------------------------------------------
 // Inferred types
@@ -87,8 +78,6 @@ export type Room        = typeof room.$inferSelect
 export type NewRoom     = typeof room.$inferInsert
 export type ScheduleRow    = typeof scheduleRow.$inferSelect
 export type NewScheduleRow = typeof scheduleRow.$inferInsert
-export type InviteKey    = typeof inviteKey.$inferSelect
-export type NewInviteKey = typeof inviteKey.$inferInsert
 
 // ---------------------------------------------------------------------------
 // Relations (required for db.query relational API)
@@ -100,7 +89,6 @@ export const userRelations = relations(user, ({ many }) => ({
 export const scheduleRelations = relations(schedule, ({ many }) => ({
   rooms: many(room),
   scheduleRows: many(scheduleRow),
-  inviteKeys: many(inviteKey),
 }))
 
 export const roomRelations = relations(room, ({ one, many }) => ({
@@ -114,6 +102,3 @@ export const scheduleRowRelations = relations(scheduleRow, ({ one }) => ({
   roomRef: one(room, { fields: [scheduleRow.room], references: [room.id] }),
 }))
 
-export const inviteKeyRelations = relations(inviteKey, ({ one }) => ({
-  schedule: one(schedule, { fields: [inviteKey.scheduleId], references: [schedule.id] }),
-}))

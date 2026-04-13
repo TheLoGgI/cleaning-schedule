@@ -5,9 +5,9 @@ import {
   ChevronDownIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline"
-import { Fragment, useState } from "react"
+import { useFormStatus } from "react-dom"
+import { useActionState, Fragment, useState } from "react"
 import { Popover, Transition } from "@headlessui/react"
-import { useFormState, useFormStatus } from "react-dom"
 
 import ModalInsertScheduleRow from "../ModalInsertScheduleRow"
 import { PendingProxy } from "@/app/components/PendingProxy"
@@ -34,12 +34,12 @@ const ScheduleTab = ({
   children: React.ReactNode
 }) => {
   // @ts-ignore - TODO: fix type formstate
-  const [, generateScheduleFormAction] = useFormState(
+  const [, generateScheduleFormAction] = useActionState(
     generateSchedule,
     initialState
   )
     // @ts-ignore - TODO: fix type formstate
-  const [, nextWeekScheduleFormAction] = useFormState(
+  const [, nextWeekScheduleFormAction] = useActionState(
     generateNextWeekSchedule,
     initialState
   )

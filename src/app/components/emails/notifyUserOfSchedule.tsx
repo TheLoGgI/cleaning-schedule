@@ -79,7 +79,7 @@ export const NotifyUsersOfSchedule = ({
                 )}
                 {index === 5 && (
                   <>
-                    <Row>‎ </Row> {/* Empty spacing */}
+                    <Row> </Row> {/* Empty spacing */}
                     <Row>
                       <strong>Sunday</strong>
                     </Row>
